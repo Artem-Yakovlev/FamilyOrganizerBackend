@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS messages
+(
+    id    BIGSERIAL PRIMARY KEY ,
+    title  VARCHAR(200) NOT NULL ,
+    message VARCHAR(254) NOT NULL
+);

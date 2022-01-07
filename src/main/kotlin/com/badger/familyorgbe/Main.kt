@@ -1,5 +1,8 @@
 package com.badger.familyorgbe
 
+import com.badger.familyorgbe.model.Message
+import com.badger.familyorgbe.repository.TestRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.ui.Model
@@ -13,14 +16,15 @@ fun main(args: Array<String>) {
     runApplication<MainApplication>(*args)
 }
 
-
-data class TestModel(val message: String)
-
 @RestController
 class FirstController {
 
+    @Autowired
+    lateinit var repository: TestRepository
+
     @GetMapping("/test")
-    fun test(model: Model): TestModel {
-        return TestModel(message = "Hello World!")
+    fun test(model: Model): List<Message> {
+
+        return repository.findAll()
     }
 }

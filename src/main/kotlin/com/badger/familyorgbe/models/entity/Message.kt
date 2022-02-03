@@ -1,4 +1,4 @@
-package com.badger.familyorgbe.model
+package com.badger.familyorgbe.models.entity
 
 import javax.persistence.*
 

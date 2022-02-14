@@ -1,8 +1,8 @@
 package com.badger.familyorgbe
 
-import com.badger.familyorgbe.repository.roles.IRolesRepository
 import com.badger.familyorgbe.utils.PrepopulateManager
-import org.springframework.beans.factory.annotation.Autowired
+import org.hibernate.annotations.common.util.impl.LoggerFactory
+import org.jboss.logging.Logger
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
@@ -17,16 +17,17 @@ class MainApplication {
         return BCryptPasswordEncoder()
     }
 
-    @Autowired
-    private lateinit var rolesRepository: IRolesRepository
-
     @PostConstruct
     fun postConstruct() {
-        PrepopulateManager(
-            rolesRepository = rolesRepository
-        ).prepopulate()
+        PrepopulateManager().prepopulate()
     }
 }
+
+private val logger by lazy {
+    LoggerFactory.logger(MainApplication::class.java)
+}
+
+fun infoLog(message: String) = logger.log(Logger.Level.INFO, message)
 
 fun main(args: Array<String>) {
     runApplication<MainApplication>(*args)

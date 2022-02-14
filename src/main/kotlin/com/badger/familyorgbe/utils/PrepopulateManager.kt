@@ -1,12 +1,7 @@
 package com.badger.familyorgbe.utils
 
-import com.badger.familyorgbe.repository.roles.IRolesRepository
-
-class PrepopulateManager(
-    private val rolesRepository: IRolesRepository
-) {
+class PrepopulateManager {
 
     fun prepopulate() {
-        rolesRepository.save(RolesHelper.userRole)
     }
 }

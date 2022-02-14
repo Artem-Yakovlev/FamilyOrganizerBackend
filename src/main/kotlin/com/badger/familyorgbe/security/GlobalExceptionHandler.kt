@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse
 
 
 @RestControllerAdvice
-class GlobalExceptionHandler(private val tokenRepository: JwtTokenRepository) : ResponseEntityExceptionHandler() {
+class GlobalExceptionHandler() : ResponseEntityExceptionHandler() {
 
     companion object {
         private const val ERROR_AUTHORIZATION = "error.authorization"
@@ -35,7 +35,6 @@ class GlobalExceptionHandler(private val tokenRepository: JwtTokenRepository) : 
         request: HttpServletRequest?,
         response: HttpServletResponse
     ): ErrorInfo {
-        tokenRepository.clearToken(response)
         response.status = HttpServletResponse.SC_UNAUTHORIZED
         return ErrorInfo(UrlUtils.buildFullRequestUrl(request), ERROR_AUTHORIZATION)
     }

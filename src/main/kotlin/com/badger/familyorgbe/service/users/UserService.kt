@@ -23,19 +23,19 @@ class UserService : UserDetailsService {
             false
         } else {
             val entity = user.toEntity(
-                encodedPassword = user.password
+                encodedPassword = bCryptPasswordEncoder.encode(user.password)
             )
             userRepository.save(entity)
             true
         }
     }
 
-    fun getUserByEmail(email: String) = userRepository.findByEmail(email)
+    fun findUserByEmail(email: String) = userRepository.findByEmail(email = email)
 
     override fun loadUserByUsername(email: String): UserDetails {
-        val user = userRepository.findByEmail(email)
-        if (user != null) {
-            return user.toUserDetails()
+        val userEntity = userRepository.findByEmail(email)
+        if (userEntity != null) {
+            return userEntity.toUserDetails()
         } else {
             throw UsernameNotFoundException("User $email not found")
         }

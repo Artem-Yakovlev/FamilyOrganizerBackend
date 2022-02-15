@@ -1,12 +1,19 @@
 package com.badger.familyorgbe.repository.jwt
 
+import com.badger.familyorgbe.core.second
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.impl.crypto.DefaultJwtSignatureValidator
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
+import javax.crypto.spec.SecretKeySpec
+
 
 class JwtRepository : IJwtRepository {
+
+    private var secretKeySpec = SecretKeySpec(JWT_SECRET.toByteArray(), SignatureAlgorithm.HS256.jcaName)
+    private val validator = DefaultJwtSignatureValidator(SignatureAlgorithm.HS256, secretKeySpec)
 
     override fun generateToken(email: String): String {
         val id = UUID.randomUUID().toString().removeDashes()
@@ -20,17 +27,21 @@ class JwtRepository : IJwtRepository {
         return Jwts.builder()
             .setId(id)
             .setIssuedAt(now)
+            .setSubject(email)
             .setNotBefore(now)
             .setExpiration(Date.from(expMillis))
-            .signWith(SignatureAlgorithm.HS256, JWT_SECRET)
+            .signWith(SignatureAlgorithm.HS256, JWT_SECRET.toByteArray())
             .compact()
     }
 
     override fun validateToken(token: String): Boolean {
-        return try {
-            Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJwt(token)
-            true
-        } catch (e: Exception) {
+        val tokenChunks = token.split(DOT)
+        return if (tokenChunks.size == TOKEN_CHUNKS_SIZE) {
+            val cleanToken = "${tokenChunks.first()}$DOT${tokenChunks.second()}"
+            val signature = tokenChunks.last()
+
+            validator.isValid(cleanToken, signature)
+        } else {
             false
         }
     }
@@ -38,11 +49,11 @@ class JwtRepository : IJwtRepository {
     override fun getEmail(token: String): String? {
         return try {
             Jwts.parser()
-                .setSigningKey(JWT_SECRET)
-                .parseClaimsJwt(token)
+                .setSigningKey(JWT_SECRET.toByteArray())
+                .parseClaimsJws(token)
                 .body.subject
         } catch (e: Exception) {
-            null
+            e.message.orEmpty()
         }
     }
 
@@ -53,7 +64,10 @@ class JwtRepository : IJwtRepository {
 
         private const val ONE_YEAR = 1L
 
+        private const val TOKEN_CHUNKS_SIZE = 3
+
         private const val DASH = "-"
         private const val EMPTY = ""
+        private const val DOT = "."
     }
 }

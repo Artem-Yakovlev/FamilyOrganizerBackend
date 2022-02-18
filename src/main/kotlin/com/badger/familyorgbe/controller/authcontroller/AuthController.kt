@@ -40,23 +40,21 @@ class AuthController {
 
     @PostMapping("checkCode")
     fun checkCode(@RequestBody form: CheckCodeJson.Form): CheckCodeJson.Response = with(form) {
-//        val isCodeApproved = emailService.checkCodeForEmail(
-//            email = email,
-//            code = code
-//        )
-        val isCodeApproved = true
+        val isCodeApproved = emailService.checkCodeForEmail(
+            email = email,
+            code = code
+        )
 
         return if (isCodeApproved) {
             val user = User.createEmpty(
                 email = form.email
             )
             userService.saveUser(user)
-
-//            val token = jwtRepository.generateToken(email)
+            val token = jwtRepository.generateToken(email)
             CheckCodeJson.Response(
                 email = email,
                 success = true,
-                token = ""
+                token = token
             )
         } else {
             CheckCodeJson.Response(
@@ -65,10 +63,5 @@ class AuthController {
                 token = null
             )
         }
-    }
-
-    @GetMapping("test")
-    fun test() : String {
-        return jwtRepository.generateToken("13.zrka@gmail.com")
     }
 }

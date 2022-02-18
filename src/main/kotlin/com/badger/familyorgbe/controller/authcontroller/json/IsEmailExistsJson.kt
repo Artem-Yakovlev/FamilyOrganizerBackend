@@ -10,6 +10,5 @@ class IsEmailExistsJson {
         val email: String,
         val isExists: Boolean
     )
-
 }
 

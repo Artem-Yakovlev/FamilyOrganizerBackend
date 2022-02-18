@@ -57,7 +57,6 @@ class SpringSecurityConfig : WebSecurityConfigurerAdapter() {
 
             // Set permissions on endpoints
             .authorizeRequests() // Our public endpoints
-            .antMatchers("/api/public/**").permitAll()
             .antMatchers("/auth/**").permitAll()
 
             // Our private endpoints

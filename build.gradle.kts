@@ -1,11 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("plugin.jpa") version "1.4.32"
-    id("org.springframework.boot") version "2.4.4"
+    id("org.springframework.boot") version "2.6.3"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    kotlin("jvm") version "1.4.32"
-    kotlin("plugin.spring") version "1.4.32"
+
+    kotlin("plugin.jpa") version "1.6.10"
+    kotlin("jvm") version "1.6.10"
+    kotlin("plugin.spring") version "1.6.10"
 }
 
 group = "me.13zrk"
@@ -13,6 +14,7 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    google()
 }
 
 dependencies {
@@ -39,6 +41,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.security:spring-security-core")
+    implementation("org.springframework.boot:spring-boot-starter-validation:2.6.3")
+
     implementation("io.jsonwebtoken:jjwt:0.9.1")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:2.3.3")
 

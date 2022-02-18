@@ -1,5 +1,6 @@
 package com.badger.familyorgbe.repository.jwt
 
+import com.badger.familyorgbe.core.exception.InvalidJwtException
 import com.badger.familyorgbe.core.second
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -46,14 +47,14 @@ class JwtRepository : IJwtRepository {
         }
     }
 
-    override fun getEmail(token: String): String? {
+    override fun getEmail(token: String): String {
         return try {
             Jwts.parser()
                 .setSigningKey(JWT_SECRET.toByteArray())
                 .parseClaimsJws(token)
                 .body.subject
         } catch (e: Exception) {
-            e.message.orEmpty()
+            throw InvalidJwtException("Invalid token")
         }
     }
 

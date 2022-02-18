@@ -6,5 +6,5 @@ interface IJwtRepository {
 
     fun validateToken(token: String): Boolean
 
-    fun getEmail(token: String): String?
+    fun getEmail(token: String): String
 }

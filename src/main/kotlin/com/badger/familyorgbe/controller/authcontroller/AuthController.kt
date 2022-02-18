@@ -1,6 +1,7 @@
 package com.badger.familyorgbe.controller.authcontroller
 
 import com.badger.familyorgbe.controller.authcontroller.json.*
+import com.badger.familyorgbe.core.base.BaseController
 import com.badger.familyorgbe.models.usual.User
 import com.badger.familyorgbe.repository.jwt.IJwtRepository
 import com.badger.familyorgbe.service.email.EmailService
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/auth")
-class AuthController {
+class AuthController : BaseController() {
 
     @Autowired
     private lateinit var userService: UserService

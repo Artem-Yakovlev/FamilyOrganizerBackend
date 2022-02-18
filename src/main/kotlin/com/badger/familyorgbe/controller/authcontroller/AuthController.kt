@@ -3,6 +3,7 @@ package com.badger.familyorgbe.controller.authcontroller
 import com.badger.familyorgbe.controller.authcontroller.json.*
 import com.badger.familyorgbe.models.usual.User
 import com.badger.familyorgbe.repository.jwt.IJwtRepository
+import com.badger.familyorgbe.service.email.EmailService
 import com.badger.familyorgbe.service.users.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -17,18 +18,8 @@ class AuthController {
     @Autowired
     private lateinit var jwtRepository: IJwtRepository
 
-
-    @PostMapping("create")
-    fun createAccount(@RequestBody form: CreateAccountJson.Form): CreateAccountJson.Response {
-        val user = User.createEmpty(
-            email = form.email,
-            password = form.password
-        )
-
-        return CreateAccountJson.Response(
-            success = userService.saveUser(user)
-        )
-    }
+    @Autowired
+    private lateinit var emailService: EmailService
 
     @PostMapping("isEmailExists")
     fun isEmailExists(@RequestBody form: IsEmailExistsJson.Form): IsEmailExistsJson.Response {
@@ -39,19 +30,45 @@ class AuthController {
         )
     }
 
-    @PostMapping("login")
-    fun login(@RequestBody form: LoginJson.Form): LoginJson.Response {
-        return LoginJson.Response()
+    @PostMapping("sendCode")
+    fun sendCode(@RequestBody form: SendCodeJson.Form): SendCodeJson.Response {
+        val isCodeSent = emailService.sendNewCodeTo(form.email)
+        return SendCodeJson.Response(
+            success = isCodeSent
+        )
     }
 
-//    @PostMapping("login-old")
-//    fun loginUser(@RequestBody user: User): AuthResponse {
-//        val token = jwtRepository.generateToken(user.email)
-//
-//        return AuthResponse(
-//            token = token,
-//            confirmed = jwtRepository.validateToken(token),
-//            email = jwtRepository.getEmail(token).orEmpty()
+    @PostMapping("checkCode")
+    fun checkCode(@RequestBody form: CheckCodeJson.Form): CheckCodeJson.Response = with(form) {
+//        val isCodeApproved = emailService.checkCodeForEmail(
+//            email = email,
+//            code = code
 //        )
-//    }
+        val isCodeApproved = true
+
+        return if (isCodeApproved) {
+            val user = User.createEmpty(
+                email = form.email
+            )
+            userService.saveUser(user)
+
+//            val token = jwtRepository.generateToken(email)
+            CheckCodeJson.Response(
+                email = email,
+                success = true,
+                token = ""
+            )
+        } else {
+            CheckCodeJson.Response(
+                email = email,
+                success = false,
+                token = null
+            )
+        }
+    }
+
+    @GetMapping("test")
+    fun test() : String {
+        return jwtRepository.generateToken("13.zrka@gmail.com")
+    }
 }

@@ -37,9 +37,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-mustache")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.security:spring-security-core")
     implementation("io.jsonwebtoken:jjwt:0.9.1")
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api:2.3.3")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
+    implementation("org.glassfish.jaxb:jaxb-runtime:3.0.1")
 
     implementation("org.postgresql:postgresql")
 

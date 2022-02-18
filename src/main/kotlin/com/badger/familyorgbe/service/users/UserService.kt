@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
@@ -15,16 +14,11 @@ class UserService : UserDetailsService {
     @Autowired
     private lateinit var userRepository: IUsersRepository
 
-    @Autowired
-    private lateinit var bCryptPasswordEncoder: BCryptPasswordEncoder
-
     fun saveUser(user: User): Boolean {
         return if (userRepository.findByEmail(user.name) != null) {
             false
         } else {
-            val entity = user.toEntity(
-                encodedPassword = bCryptPasswordEncoder.encode(user.password)
-            )
+            val entity = user.toEntity()
             userRepository.save(entity)
             true
         }

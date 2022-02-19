@@ -1,5 +1,6 @@
 package com.badger.familyorgbe.service.users
 
+import com.badger.familyorgbe.models.entity.UserEntity
 import com.badger.familyorgbe.models.usual.User
 import com.badger.familyorgbe.repository.users.IUsersRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -7,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserService : UserDetailsService {
@@ -32,6 +34,17 @@ class UserService : UserDetailsService {
             return userEntity.toUserDetails()
         } else {
             throw UsernameNotFoundException("User $email not found")
+        }
+    }
+
+    @Transactional
+    fun updateNameOfUser(email: String, name: String): UserEntity? {
+        return findUserByEmail(email)?.let { user ->
+            userRepository.updateUserName(
+                userId = user.id,
+                username = name
+            )
+            findUserByEmail(email)
         }
     }
 }

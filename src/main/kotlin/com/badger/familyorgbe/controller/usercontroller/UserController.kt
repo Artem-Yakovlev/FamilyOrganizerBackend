@@ -1,7 +1,9 @@
 package com.badger.familyorgbe.controller.usercontroller
 
 import com.badger.familyorgbe.controller.usercontroller.json.GetProfileJson
+import com.badger.familyorgbe.controller.usercontroller.json.UpdateProfileNameJson
 import com.badger.familyorgbe.core.base.BaseController
+import com.badger.familyorgbe.core.exception.LogicException
 import com.badger.familyorgbe.models.usual.User
 import com.badger.familyorgbe.repository.jwt.IJwtRepository
 import com.badger.familyorgbe.service.users.UserService
@@ -33,6 +35,31 @@ class UserController : BaseController() {
         return GetProfileJson.Response(
             user = userEntity?.let(User::fromEntity)
         )
+    }
+
+    @PostMapping
+    fun updateProfileName(
+        @RequestHeader(HttpHeaders.AUTHORIZATION)
+        authHeader: String,
+        @RequestBody
+        form: UpdateProfileNameJson.Form
+    ): UpdateProfileNameJson.Response {
+        val token = authHeader.getBearerTokenIfExist()
+        val email = jwtRepository.getEmail(token)
+
+        val userEntity = userService.updateNameOfUser(
+            email = email,
+            name = form.updatedName
+        )
+        val user = userEntity?.let(User::fromEntity)
+
+        if (user != null) {
+            return UpdateProfileNameJson.Response(
+                user = user
+            )
+        } else {
+            throw LogicException("User does not exists!")
+        }
     }
 
 }

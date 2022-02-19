@@ -20,7 +20,6 @@ class EmailService {
         return when (val codeResponse = storage.sendNewCodeTo(email)) {
             is ILettersStorage.SendNewCodeResponse.Success -> {
                 val code = codeResponse.code
-
                 val message = SimpleMailMessage().apply {
                     setTo(email)
                     setSubject(AUTH_CODE_SUBJECT)
@@ -28,7 +27,6 @@ class EmailService {
                 }
 
                 emailSender.send(message)
-
                 true
             }
             is ILettersStorage.SendNewCodeResponse.Failed -> {

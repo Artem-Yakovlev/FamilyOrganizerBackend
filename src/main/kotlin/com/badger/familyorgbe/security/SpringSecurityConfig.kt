@@ -3,8 +3,10 @@ package com.badger.familyorgbe.security
 import JwtTokenFilter
 import com.badger.familyorgbe.service.users.UserService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -16,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.filter.CorsFilter
+import org.springframework.web.servlet.HandlerExceptionResolver
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -29,6 +32,10 @@ class SpringSecurityConfig : WebSecurityConfigurerAdapter() {
 
     @Autowired
     private lateinit var jwtTokenFilter: JwtTokenFilter
+
+    @Autowired
+    @Qualifier("handlerExceptionResolver")
+    private lateinit var resolver: HandlerExceptionResolver
 
     @Throws(Exception::class)
     override fun configure(auth: AuthenticationManagerBuilder) {
@@ -47,20 +54,18 @@ class SpringSecurityConfig : WebSecurityConfigurerAdapter() {
 
             // Set unauthorized requests exception handler
             .exceptionHandling()
-            .authenticationEntryPoint { request: HttpServletRequest?, response: HttpServletResponse, ex: AuthenticationException ->
-                response.sendError(
-                    HttpServletResponse.SC_UNAUTHORIZED,
-                    "${ex.message} hm?"
-                )
+            .authenticationEntryPoint { request: HttpServletRequest, response: HttpServletResponse, ex: AuthenticationException ->
+                resolver.resolveException(request, response, null, ex)
             }
             .and()
 
             // Set permissions on endpoints
             .authorizeRequests() // Our public endpoints
-            .antMatchers("/auth/**").permitAll()
+            .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
 
             // Our private endpoints
-            .anyRequest().authenticated()
+            .anyRequest()
+            .authenticated()
             .and()
 
             // Add JWT token filter

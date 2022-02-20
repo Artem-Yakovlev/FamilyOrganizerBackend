@@ -4,6 +4,7 @@ import com.badger.familyorgbe.controller.usercontroller.json.GetProfileJson
 import com.badger.familyorgbe.controller.usercontroller.json.UpdateProfileNameJson
 import com.badger.familyorgbe.core.base.BaseController
 import com.badger.familyorgbe.core.exception.LogicException
+import com.badger.familyorgbe.infoLog
 import com.badger.familyorgbe.models.usual.User
 import com.badger.familyorgbe.repository.jwt.IJwtRepository
 import com.badger.familyorgbe.service.users.UserService

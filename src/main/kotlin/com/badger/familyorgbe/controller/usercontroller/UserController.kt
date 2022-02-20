@@ -37,7 +37,7 @@ class UserController : BaseController() {
         )
     }
 
-    @PostMapping
+    @PostMapping("updateProfileName")
     fun updateProfileName(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
         authHeader: String,
@@ -47,12 +47,10 @@ class UserController : BaseController() {
         val token = authHeader.getBearerTokenIfExist()
         val email = jwtRepository.getEmail(token)
 
-        val userEntity = userService.updateNameOfUser(
+        val user = userService.updateNameOfUser(
             email = email,
             name = form.updatedName
         )
-        val user = userEntity?.let(User::fromEntity)
-
         if (user != null) {
             return UpdateProfileNameJson.Response(
                 user = user

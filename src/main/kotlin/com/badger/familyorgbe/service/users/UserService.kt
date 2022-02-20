@@ -38,13 +38,13 @@ class UserService : UserDetailsService {
     }
 
     @Transactional
-    fun updateNameOfUser(email: String, name: String): UserEntity? {
+    fun updateNameOfUser(email: String, name: String): User? {
         return findUserByEmail(email)?.let { user ->
-            userRepository.updateUserName(
-                userId = user.id,
-                username = name
+            userRepository.updateName(
+                id = user.id,
+                name = name
             )
-            findUserByEmail(email)
+            User.fromEntity(user).copy(name = name)
         }
     }
 }

@@ -41,11 +41,10 @@ class AuthController : BaseController() {
 
     @PostMapping("checkCode")
     fun checkCode(@RequestBody form: CheckCodeJson.Form): CheckCodeJson.Response = with(form) {
-//        val isCodeApproved = emailService.checkCodeForEmail(
-//            email = email,
-//            code = code
-//        )
-        val isCodeApproved = true
+        val isCodeApproved = emailService.checkCodeForEmail(
+            email = email,
+            code = code
+        )
 
         return if (isCodeApproved) {
             val user = User.createEmpty(

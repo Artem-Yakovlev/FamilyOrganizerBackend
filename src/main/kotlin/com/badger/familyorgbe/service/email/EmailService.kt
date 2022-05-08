@@ -1,5 +1,6 @@
 package com.badger.familyorgbe.service.email
 
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
@@ -25,8 +26,8 @@ class EmailService {
                     setSubject(AUTH_CODE_SUBJECT)
                     setText(code)
                 }
-
-                emailSender.send(message)
+                LoggerFactory.getLogger(EmailService::class.java).warn("code: $code")
+//                emailSender.send(message)
                 true
             }
             is ILettersStorage.SendNewCodeResponse.Failed -> {

@@ -4,8 +4,7 @@ import com.badger.familyorgbe.models.entity.UserEntity
 
 data class User(
     val name: String,
-    val email: String,
-    val fridgeId: String
+    val email: String
 ) {
     fun toEntity(
     ) = UserEntity(
@@ -17,14 +16,12 @@ data class User(
 
         fun createEmpty(email: String) = User(
             name = "",
-            email = email,
-            fridgeId = ""
+            email = email
         )
 
         fun fromEntity(entity: UserEntity) = User(
             name = entity.name,
-            email = entity.email,
-            fridgeId = "NONE"
+            email = entity.email
         )
     }
 }

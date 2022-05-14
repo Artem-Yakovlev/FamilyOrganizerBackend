@@ -12,14 +12,14 @@ interface IUsersRepository : JpaRepository<UserEntity, Long> {
     fun findByEmail(email: String): UserEntity?
 
     @Modifying
-    @Query("update UserEntity u set u.name = :name where u.id = :id")
+    @Query("update UserEntity u set u.name = :name where u.email = :email")
     fun updateName(
-        @Param(value = "id") id: Long,
+        @Param(value = "email") email: String,
         @Param(value = "name") name: String
     )
 
-    @Query("select u from UserEntity u where u.email in :emails")
-    fun getAllByEmails(
-        @Param(value = "emails") emails: List<String>
-    ): List<UserEntity>
+//    @Query("select u from UserEntity u where u.email in :emails")
+//    fun getAllByEmails(
+//        @Param(value = "emails") emails: List<String>
+//    ): List<UserEntity>
 }

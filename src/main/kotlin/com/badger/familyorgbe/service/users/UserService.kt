@@ -41,7 +41,7 @@ class UserService : UserDetailsService {
     fun updateNameOfUser(email: String, name: String): User? {
         return findUserByEmail(email)?.let { user ->
             userRepository.updateName(
-                id = user.id,
+                email = user.email,
                 name = name
             )
             User.fromEntity(user).copy(name = name)

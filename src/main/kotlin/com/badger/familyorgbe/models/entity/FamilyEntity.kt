@@ -21,7 +21,7 @@ data class FamilyEntity(
     @Convert(converter = EmailListToStringConverter::class)
     val members: List<String>,
 
-    @Column(name = "members")
+    @Column(name = "invites")
     @Convert(converter = EmailListToStringConverter::class)
     val invites: List<String>
 )

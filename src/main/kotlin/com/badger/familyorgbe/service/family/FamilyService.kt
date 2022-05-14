@@ -52,9 +52,10 @@ class FamilyService {
     fun getAllMembersForFamily(familyId: Long): List<User> {
         return familyRepository.getFamilyById(familyId)
             ?.let { family ->
-                usersRepository
-                    .getAllByEmails(family.members)
-                    .map(User::fromEntity)
+//                usersRepository
+//                    .getAllByEmails(family.members)
+//                    .map(User::fromEntity)
+                emptyList()
             } ?: emptyList()
     }
 }

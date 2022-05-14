@@ -5,15 +5,11 @@ import javax.persistence.*
 @Entity
 @Table(name = "users")
 class UserEntity(
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
-    @Column(name = "name")
-    val name: String,
     @Id
     @Column(name = "email")
-    val email: String
+    val email: String,
+    @Column(name = "name")
+    val name: String
 ) {
 
     fun toUserDetails() = org.springframework.security.core.userdetails.User(

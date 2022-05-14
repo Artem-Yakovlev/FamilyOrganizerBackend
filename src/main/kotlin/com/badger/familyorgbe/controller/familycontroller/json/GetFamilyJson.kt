@@ -1,12 +1,14 @@
 package com.badger.familyorgbe.controller.familycontroller.json
 
+import com.badger.familyorgbe.models.usual.Family
+
 class GetFamilyJson {
 
-    class Form(
-
+    data class Form(
+        val familyId: Long
     )
 
-    class Response(
-
+    data class Response(
+        val family: Family?
     )
 }

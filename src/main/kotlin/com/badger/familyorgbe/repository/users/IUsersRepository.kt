@@ -17,4 +17,9 @@ interface IUsersRepository : JpaRepository<UserEntity, Long> {
         @Param(value = "id") id: Long,
         @Param(value = "name") name: String
     )
+
+    @Query("select u from UserEntity u where u.email in :emails")
+    fun getAllByEmails(
+        @Param(value = "emails") emails: List<String>
+    ): List<UserEntity>
 }

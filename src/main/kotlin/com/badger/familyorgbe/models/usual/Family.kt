@@ -4,34 +4,30 @@ import com.badger.familyorgbe.models.entity.FamilyEntity
 
 
 data class Family(
-    val id: String,
+    val id: Long,
     val name: String,
-    val fridgeId: String,
+//    val fridgeId: String,
     val members: List<String>,
     val invites: List<String>
 ) {
 
     fun toEntity() = FamilyEntity(
         name = name,
-        fridgeId = fridgeId
+//        fridgeId = fridgeId,
+        members = members,
+        invites = invites
     )
 
     companion object {
 
-        fun createEmpty(creatorEmail: String) = Family(
-            id = "",
-            name = "",
-            fridgeId = "",
-            members = listOf(creatorEmail),
-            invites = emptyList()
-        )
-
-        fun fromEntity(entity: FamilyEntity) = Family(
-            id = entity.id.toString(),
-            name = entity.name,
-            fridgeId = entity.fridgeId,
-            members = emptyList(),
-            invites = emptyList()
-        )
+        fun fromEntity(entity: FamilyEntity) = with(entity){
+            Family(
+                id = id,
+                name = name,
+//                fridgeId = fridgeId,
+                members = members,
+                invites = invites
+            )
+        }
     }
 }

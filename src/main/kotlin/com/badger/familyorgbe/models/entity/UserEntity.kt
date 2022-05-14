@@ -11,6 +11,7 @@ class UserEntity(
     val id: Long = 0,
     @Column(name = "name")
     val name: String,
+    @Id
     @Column(name = "email")
     val email: String
 ) {

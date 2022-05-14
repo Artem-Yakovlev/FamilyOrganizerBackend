@@ -1,12 +1,14 @@
 package com.badger.familyorgbe.controller.familyauthcontroller.json
 
+import com.badger.familyorgbe.models.usual.Family
+
 class CreateJson {
 
-    class Form(
-
+    data class Form(
+        val familyName: String
     )
 
-    class Response(
-
+    data class Response(
+        val family: Family
     )
 }

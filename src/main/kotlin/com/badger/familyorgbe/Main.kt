@@ -5,6 +5,8 @@ import com.badger.familyorgbe.repository.jwt.IJwtRepository
 import com.badger.familyorgbe.repository.jwt.JwtRepository
 import com.badger.familyorgbe.service.email.ILettersStorage
 import com.badger.familyorgbe.service.email.LettersStorage
+import com.badger.familyorgbe.service.users.IOnlineStorage
+import com.badger.familyorgbe.service.users.OnlineStorage
 import com.badger.familyorgbe.utils.PrepopulateManager
 import org.hibernate.annotations.common.util.impl.LoggerFactory
 import org.jboss.logging.Logger
@@ -29,6 +31,11 @@ class MainApplication {
     @Bean
     fun lettersStorage(): ILettersStorage {
         return LettersStorage()
+    }
+
+    @Bean
+    fun onlineStorage(): IOnlineStorage {
+        return OnlineStorage()
     }
 
     @PostConstruct

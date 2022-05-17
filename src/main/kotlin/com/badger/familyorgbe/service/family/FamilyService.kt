@@ -17,14 +17,14 @@ class FamilyService {
     @Autowired
     private lateinit var usersRepository: IUsersRepository
 
-    fun createFamily(authorEmail: String, familyName: String): Family {
+    fun createFamily(authorEmail: String, familyName: String): Pair<Long, List<Family>> {
         val entity = FamilyEntity(
             name = familyName,
             members = listOf(authorEmail),
             invites = emptyList()
         )
         val savedEntity = familyRepository.save(entity)
-        return Family.fromEntity(savedEntity)
+        return savedEntity.id to getAllFamiliesForEmail(authorEmail)
     }
 
     fun getAllFamiliesForEmail(email: String): List<Family> {

@@ -6,6 +6,7 @@ import com.badger.familyorgbe.controller.familyauthcontroller.json.GetAllJson
 import com.badger.familyorgbe.controller.familyauthcontroller.json.LeaveJson
 import com.badger.familyorgbe.core.base.BaseAuthedController
 import com.badger.familyorgbe.core.base.BaseController
+import com.badger.familyorgbe.models.usual.Family
 import com.badger.familyorgbe.repository.jwt.IJwtRepository
 import com.badger.familyorgbe.service.family.FamilyService
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,6 +20,9 @@ class FamilyAuthController : BaseAuthedController() {
     @Autowired
     private lateinit var familyService: FamilyService
 
+    private fun List<Family>.filterMembersAndInvites(email: String) =
+        filter { email in it.members } to filter { email in it.invites }
+
     @PostMapping("getAll")
     fun getAll(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
@@ -27,9 +31,10 @@ class FamilyAuthController : BaseAuthedController() {
         form: GetAllJson.Form
     ): GetAllJson.Response {
         val email = authHeader.getAuthEmail()
-        val families = familyService.getAllFamiliesForEmail(email)
+        val familiesAndInvites = familyService.getAllFamiliesForEmail(email).filterMembersAndInvites(email)
         return GetAllJson.Response(
-            families = families
+            families = familiesAndInvites.first,
+            invites = familiesAndInvites.second
         )
     }
 
@@ -77,9 +82,12 @@ class FamilyAuthController : BaseAuthedController() {
         form: CreateJson.Form
     ): CreateJson.Response {
         val email = authHeader.getAuthEmail()
-        val family = familyService.createFamily(authorEmail = email, familyName = form.familyName)
+        val result = familyService.createFamily(authorEmail = email, familyName = form.familyName)
+        val familiesAndInvites = result.second.filterMembersAndInvites(email)
         return CreateJson.Response(
-            family = family
+            families = familiesAndInvites.first,
+            invites = familiesAndInvites.second,
+            createdId = result.first
         )
     }
 }

@@ -9,6 +9,8 @@ class CreateJson {
     )
 
     data class Response(
-        val family: Family
+        val createdId: Long,
+        val families: List<Family>,
+        val invites: List<Family>
     )
 }

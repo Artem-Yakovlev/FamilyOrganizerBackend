@@ -9,6 +9,7 @@ class GetAllJson {
     )
 
     data class Response(
-        val families: List<Family>
+        val families: List<Family>,
+        val invites: List<Family>
     )
 }

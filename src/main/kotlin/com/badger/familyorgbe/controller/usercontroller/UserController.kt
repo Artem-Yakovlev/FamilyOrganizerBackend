@@ -5,12 +5,14 @@ import com.badger.familyorgbe.controller.usercontroller.json.UpdateProfileNameJs
 import com.badger.familyorgbe.core.base.BaseController
 import com.badger.familyorgbe.core.exception.LogicException
 import com.badger.familyorgbe.infoLog
-import com.badger.familyorgbe.models.usual.User
 import com.badger.familyorgbe.repository.jwt.IJwtRepository
 import com.badger.familyorgbe.service.users.UserService
+import com.badger.familyorgbe.utils.saveFile
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
+import org.springframework.util.StringUtils
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/user")
@@ -59,6 +61,26 @@ class UserController : BaseController() {
         } else {
             throw LogicException("User does not exists!")
         }
+    }
+
+    @PostMapping("updateProfileImage")
+    fun updateProfileImage(
+        @RequestHeader(HttpHeaders.AUTHORIZATION)
+        authHeader: String,
+        @RequestParam("profileImage")
+        multipartFile: MultipartFile
+    ) {
+        val fileName = StringUtils.cleanPath(multipartFile.originalFilename.orEmpty())
+        val token = authHeader.getBearerTokenIfExist()
+        val email = jwtRepository.getEmail(token)
+
+        val uploadDir = "$USER_PHOTOS/$email"
+
+        saveFile(uploadDir, fileName, multipartFile)
+    }
+
+    companion object {
+        const val USER_PHOTOS = "user-photos"
     }
 
 }

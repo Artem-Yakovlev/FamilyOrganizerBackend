@@ -62,6 +62,7 @@ class SpringSecurityConfig : WebSecurityConfigurerAdapter() {
             // Set permissions on endpoints
             .authorizeRequests() // Our public endpoints
             .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/user-photos/**").permitAll()
 
             // Our private endpoints
             .anyRequest()

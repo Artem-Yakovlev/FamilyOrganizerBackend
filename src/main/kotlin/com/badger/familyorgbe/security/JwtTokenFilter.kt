@@ -1,5 +1,7 @@
 import com.badger.familyorgbe.repository.jwt.IJwtRepository
 import com.badger.familyorgbe.repository.users.IUsersRepository
+import com.badger.familyorgbe.service.users.IOnlineStorage
+import com.badger.familyorgbe.service.users.OnlineStorage
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -22,6 +24,9 @@ class JwtTokenFilter : OncePerRequestFilter() {
     @Autowired
     private lateinit var jwtRepository: IJwtRepository
 
+    @Autowired
+    private lateinit var onlineStorage: IOnlineStorage
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -30,7 +35,7 @@ class JwtTokenFilter : OncePerRequestFilter() {
         // Get authorization header and validate
         val header = request.getHeader(HttpHeaders.AUTHORIZATION).orEmpty()
 
-        if (header.isEmpty() || !header.startsWith("Bearer ")) {
+        if (header.isEmpty() || !header.startsWith(BEARER_PREFIX)) {
             chain.doFilter(request, response)
             return
         }
@@ -43,10 +48,7 @@ class JwtTokenFilter : OncePerRequestFilter() {
         }
 
         val email = jwtRepository.getEmail(token)
-        if (email == null) {
-            chain.doFilter(request, response)
-            return
-        }
+        onlineStorage.registerRequest(email)
 
         // Get user identity and set it on the spring security context
         val userDetails: UserDetails? = usersRepository
@@ -61,5 +63,9 @@ class JwtTokenFilter : OncePerRequestFilter() {
 
         SecurityContextHolder.getContext().authentication = authentication
         chain.doFilter(request, response)
+    }
+
+    companion object {
+        private const val BEARER_PREFIX = "Bearer "
     }
 }

@@ -1,6 +1,5 @@
 package com.badger.familyorgbe.service.users
 
-import com.badger.familyorgbe.models.entity.UserEntity
 import com.badger.familyorgbe.models.usual.User
 import com.badger.familyorgbe.repository.users.IUsersRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,7 +25,9 @@ class UserService : UserDetailsService {
         }
     }
 
-    fun findUserByEmail(email: String) = userRepository.findByEmail(email = email)
+    fun findUserByEmail(email: String): User? {
+        return userRepository.findByEmail(email = email)?.let(User::fromEntity)
+    }
 
     override fun loadUserByUsername(email: String): UserDetails {
         val userEntity = userRepository.findByEmail(email)
@@ -44,7 +45,7 @@ class UserService : UserDetailsService {
                 email = user.email,
                 name = name
             )
-            User.fromEntity(user).copy(name = name)
+            user.copy(name = name)
         }
     }
 }

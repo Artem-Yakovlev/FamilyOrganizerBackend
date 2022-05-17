@@ -31,10 +31,10 @@ class UserController : BaseController() {
     ): GetProfileJson.Response {
         val token = authHeader.getBearerTokenIfExist()
         val email = jwtRepository.getEmail(token)
-        val userEntity = userService.findUserByEmail(email = email)
+        val user = userService.findUserByEmail(email = email)
 
         return GetProfileJson.Response(
-            user = userEntity?.let(User::fromEntity)
+            user = user
         )
     }
 

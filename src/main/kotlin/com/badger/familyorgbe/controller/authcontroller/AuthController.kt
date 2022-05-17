@@ -47,9 +47,12 @@ class AuthController : BaseController() {
         )
 
         return if (isCodeApproved) {
-            val user = User.createEmpty(
+
+            val user = userService.findUserByEmail(email) ?: User.createEmpty(
                 email = form.email
             )
+
+
             userService.saveUser(user)
             val token = jwtRepository.generateToken(email)
             CheckCodeJson.Response(

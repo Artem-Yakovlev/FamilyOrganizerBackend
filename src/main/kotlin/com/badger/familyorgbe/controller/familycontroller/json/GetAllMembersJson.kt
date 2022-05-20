@@ -1,6 +1,6 @@
 package com.badger.familyorgbe.controller.familycontroller.json
 
-import com.badger.familyorgbe.models.usual.FamilyMember
+import com.badger.familyorgbe.models.usual.OnlineUser
 
 class GetAllMembersJson {
 
@@ -9,6 +9,6 @@ class GetAllMembersJson {
     )
 
     data class Response(
-        val familyMembers: List<FamilyMember>?
+        val onlineUsers: List<OnlineUser>
     )
 }

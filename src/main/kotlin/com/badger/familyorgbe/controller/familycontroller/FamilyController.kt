@@ -5,7 +5,7 @@ import com.badger.familyorgbe.controller.familycontroller.json.GetFamilyJson
 import com.badger.familyorgbe.core.base.BaseAuthedController
 import com.badger.familyorgbe.core.base.rest.BaseResponse
 import com.badger.familyorgbe.core.base.rest.ResponseError
-import com.badger.familyorgbe.models.usual.FamilyMember
+import com.badger.familyorgbe.models.usual.OnlineUser
 import com.badger.familyorgbe.service.family.FamilyService
 import com.badger.familyorgbe.service.users.IOnlineStorage
 import org.springframework.beans.factory.annotation.Autowired
@@ -54,17 +54,17 @@ class FamilyController : BaseAuthedController() {
         return familyService.getFamilyById(form.familyId)
             ?.takeIf { family -> family.members.contains(email) }
             ?.let { family ->
-                val familyMembers = familyService
+                val onlineUsers = familyService
                     .getAllMembersForFamily(family.id)
                     .map { user ->
-                        FamilyMember(user = user, lastRegisterTime = onlineStorage.getLastRegisterTime(user.email) ?: 0)
+                        OnlineUser(user = user, lastRegisterTime = onlineStorage.getLastRegisterTime(user.email) ?: 0)
                     }
                 BaseResponse(
-                    data = GetAllMembersJson.Response(familyMembers)
+                    data = GetAllMembersJson.Response(onlineUsers)
                 )
             } ?: BaseResponse(
             error = ResponseError.FAMILY_DOES_NOT_EXISTS,
-            data = GetAllMembersJson.Response(familyMembers = null)
+            data = GetAllMembersJson.Response(onlineUsers = emptyList())
         )
     }
 }

@@ -1,5 +1,6 @@
 package com.badger.familyorgbe.service.users
 
+import com.badger.familyorgbe.models.entity.UserStatus
 import com.badger.familyorgbe.models.usual.User
 import com.badger.familyorgbe.repository.users.IUsersRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,6 +47,17 @@ class UserService : UserDetailsService {
                 name = name
             )
             user.copy(name = name)
+        }
+    }
+
+    @Transactional
+    fun updateStatusOfUser(email: String, status: UserStatus): User? {
+        return findUserByEmail(email)?.let { user ->
+            userRepository.updateStatus(
+                email = user.email,
+                status = status
+            )
+            user.copy(status = status)
         }
     }
 }

@@ -2,9 +2,11 @@ package com.badger.familyorgbe.controller.usercontroller
 
 import com.badger.familyorgbe.controller.usercontroller.json.GetProfileJson
 import com.badger.familyorgbe.controller.usercontroller.json.UpdateProfileNameJson
+import com.badger.familyorgbe.controller.usercontroller.json.UpdateStatusJson
 import com.badger.familyorgbe.core.base.BaseController
 import com.badger.familyorgbe.core.exception.LogicException
 import com.badger.familyorgbe.infoLog
+import com.badger.familyorgbe.models.entity.UserStatus
 import com.badger.familyorgbe.repository.jwt.IJwtRepository
 import com.badger.familyorgbe.service.users.UserService
 import com.badger.familyorgbe.utils.saveFile
@@ -77,6 +79,22 @@ class UserController : BaseController() {
         val uploadDir = "$USER_PHOTOS/$email"
 
         saveFile(uploadDir, fileName, multipartFile)
+    }
+
+    @PostMapping("updateStatus")
+    fun updateStatus(
+        @RequestHeader(HttpHeaders.AUTHORIZATION)
+        authHeader: String,
+        @RequestBody
+        form: UpdateStatusJson.Form
+    ): UpdateStatusJson.Response {
+        val token = authHeader.getBearerTokenIfExist()
+        val email = jwtRepository.getEmail(token)
+        val status = UserStatus.valueOf(form.status)
+        userService.updateStatusOfUser(email, status)
+        return UpdateStatusJson.Response(
+            success = true
+        )
     }
 
     companion object {

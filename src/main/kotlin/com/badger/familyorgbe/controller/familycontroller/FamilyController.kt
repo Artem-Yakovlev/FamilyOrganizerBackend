@@ -5,7 +5,9 @@ import com.badger.familyorgbe.controller.familycontroller.json.GetFamilyJson
 import com.badger.familyorgbe.core.base.BaseAuthedController
 import com.badger.familyorgbe.core.base.rest.BaseResponse
 import com.badger.familyorgbe.core.base.rest.ResponseError
+import com.badger.familyorgbe.models.usual.FamilyMember
 import com.badger.familyorgbe.service.family.FamilyService
+import com.badger.familyorgbe.service.users.IOnlineStorage
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.web.bind.annotation.*
@@ -16,6 +18,9 @@ class FamilyController : BaseAuthedController() {
 
     @Autowired
     private lateinit var familyService: FamilyService
+
+    @Autowired
+    private lateinit var onlineStorage: IOnlineStorage
 
     @PostMapping("getFamily")
     fun getFamily(
@@ -49,12 +54,17 @@ class FamilyController : BaseAuthedController() {
         return familyService.getFamilyById(form.familyId)
             ?.takeIf { family -> family.members.contains(email) }
             ?.let { family ->
+                val familyMembers = familyService
+                    .getAllMembersForFamily(family.id)
+                    .map { user ->
+                        FamilyMember(user = user, lastRegisterTime = onlineStorage.getLastRegisterTime(user.email) ?: 0)
+                    }
                 BaseResponse(
-                    data = GetAllMembersJson.Response(familyService.getAllMembersForFamily(family.id))
+                    data = GetAllMembersJson.Response(familyMembers)
                 )
             } ?: BaseResponse(
             error = ResponseError.FAMILY_DOES_NOT_EXISTS,
-            data = GetAllMembersJson.Response(users = null)
+            data = GetAllMembersJson.Response(familyMembers = null)
         )
     }
 }

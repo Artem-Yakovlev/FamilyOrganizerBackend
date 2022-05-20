@@ -1,6 +1,5 @@
 package com.badger.familyorgbe.models.entity
 
-import com.badger.familyorgbe.utils.converters.EmailListToStringConverter
 import javax.persistence.*
 
 @Entity
@@ -18,10 +17,8 @@ data class FamilyEntity(
 //    val fridgeId: String,
 
     @Column(name = "members")
-    @Convert(converter = EmailListToStringConverter::class)
-    val members: List<String>,
+    val members: String,
 
     @Column(name = "invites")
-    @Convert(converter = EmailListToStringConverter::class)
-    val invites: List<String>
+    val invites: String
 )

@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
 interface IFamilyRepository : JpaRepository<FamilyEntity, Long> {
-
-    @Query(value = "select fam from FamilyEntity fam where :email in fam.members or :email in fam.invites")
+//    @Query("Select c from Registration c where c.place like %:place%").
+    @Query(value = "select fam from FamilyEntity fam where fam.members like %:email% or fam.invites like %:email%")
     fun getAllFamiliesForEmail(
         @Param(value = "email") email: String
     ): List<FamilyEntity>

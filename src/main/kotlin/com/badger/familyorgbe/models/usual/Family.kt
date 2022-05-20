@@ -1,6 +1,8 @@
 package com.badger.familyorgbe.models.usual
 
 import com.badger.familyorgbe.models.entity.FamilyEntity
+import com.badger.familyorgbe.utils.converters.convertToEmailList
+import com.badger.familyorgbe.utils.converters.convertToEmailString
 
 
 data class Family(
@@ -14,19 +16,19 @@ data class Family(
     fun toEntity() = FamilyEntity(
         name = name,
 //        fridgeId = fridgeId,
-        members = members,
-        invites = invites
+        members = convertToEmailString(members),
+        invites = convertToEmailString(invites)
     )
 
     companion object {
 
-        fun fromEntity(entity: FamilyEntity) = with(entity){
+        fun fromEntity(entity: FamilyEntity) = with(entity) {
             Family(
                 id = id,
                 name = name,
 //                fridgeId = fridgeId,
-                members = members,
-                invites = invites
+                members = convertToEmailList(members),
+                invites = convertToEmailList(invites)
             )
         }
     }

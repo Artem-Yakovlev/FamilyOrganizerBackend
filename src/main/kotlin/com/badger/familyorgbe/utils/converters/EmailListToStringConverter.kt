@@ -1,19 +1,11 @@
 package com.badger.familyorgbe.utils.converters
 
-import javax.persistence.AttributeConverter
+private const val DELIMITER = ";"
 
+fun convertToEmailString(attribute: List<String>?): String {
+    return attribute?.joinToString(DELIMITER).orEmpty()
+}
 
-class EmailListToStringConverter : AttributeConverter<List<String>, String> {
-
-    companion object {
-        private const val DELIMITER = ";"
-    }
-
-    override fun convertToDatabaseColumn(attribute: List<String>?): String {
-        return attribute?.joinToString(DELIMITER).orEmpty()
-    }
-
-    override fun convertToEntityAttribute(dbData: String?): List<String> {
-        return dbData?.split(DELIMITER) ?: emptyList()
-    }
+fun convertToEmailList(dbData: String?): List<String> {
+    return dbData?.split(DELIMITER) ?: emptyList()
 }

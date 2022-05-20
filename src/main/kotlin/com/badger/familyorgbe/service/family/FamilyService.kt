@@ -5,6 +5,8 @@ import com.badger.familyorgbe.models.usual.Family
 import com.badger.familyorgbe.models.usual.User
 import com.badger.familyorgbe.repository.family.IFamilyRepository
 import com.badger.familyorgbe.repository.users.IUsersRepository
+import com.badger.familyorgbe.utils.converters.convertToEmailList
+import com.badger.familyorgbe.utils.converters.convertToEmailString
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -20,8 +22,8 @@ class FamilyService {
     fun createFamily(authorEmail: String, familyName: String): Pair<Long, List<Family>> {
         val entity = FamilyEntity(
             name = familyName,
-            members = listOf(authorEmail),
-            invites = emptyList()
+            members = authorEmail,
+            invites = ""
         )
         val savedEntity = familyRepository.save(entity)
         return savedEntity.id to getAllFamiliesForEmail(authorEmail)
@@ -40,9 +42,12 @@ class FamilyService {
 
     fun excludeMemberFromFamily(familyId: Long, email: String): Family? {
         return familyRepository.getFamilyById(familyId)?.let { entity ->
+            val members = convertToEmailList(entity.members).filter { memberEmail -> memberEmail != email }
+            val invites = convertToEmailList(entity.invites).filter { inviteEmail -> inviteEmail != email }
+
             val updatedEntity = entity.copy(
-                members = entity.members.filter { memberEmail -> memberEmail != email },
-                invites = entity.invites.filter { inviteEmail -> inviteEmail != email }
+                members = convertToEmailString(members),
+                invites = convertToEmailString(invites)
             )
             val savedEntity = familyRepository.save(updatedEntity)
             Family.fromEntity(savedEntity)
@@ -52,10 +57,9 @@ class FamilyService {
     fun getAllMembersForFamily(familyId: Long): List<User> {
         return familyRepository.getFamilyById(familyId)
             ?.let { family ->
-//                usersRepository
-//                    .getAllByEmails(family.members)
-//                    .map(User::fromEntity)
-                emptyList()
+                usersRepository
+                    .getAllByEmails(convertToEmailList(family.members))
+                    .map(User::fromEntity)
             } ?: emptyList()
     }
 }

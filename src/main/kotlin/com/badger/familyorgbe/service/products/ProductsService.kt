@@ -24,21 +24,21 @@ class ProductsService {
 
     fun addProducts(familyId: Long, products: List<Product>) = getFamilyById(familyId)?.let { entity ->
         val savedEntities = productRepository.saveAll(products.map(Product::toEntity))
-        val actualIds = (entity.productsIds.convertToIdsList() + savedEntities.map(ProductEntity::id)).sorted()
+        val actualIds = (entity.productsIds?.convertToIdsList().orEmpty() + savedEntities.map(ProductEntity::id)).sorted()
 
         val savedEntity = familyRepository.save(
             entity.copy(productsIds = actualIds.convertToString())
         )
-        return@let getAllProducts(savedEntity.productsIds.convertToIdsList())
+        return@let getAllProducts(savedEntity.productsIds?.convertToIdsList().orEmpty())
     }
 
     fun deleteProducts(familyId: Long, deleteIds: List<Long>) = getFamilyById(familyId)?.let { entity ->
         productRepository.deleteAllById(deleteIds)
-        val actualIds = entity.productsIds.convertToIdsList().filter { it !in deleteIds }.sorted().convertToString()
+        val actualIds = entity.productsIds?.convertToIdsList()?.filter { it !in deleteIds }?.sorted()?.convertToString()
 
         val savedEntity = familyRepository.save(
             entity.copy(productsIds = actualIds)
         )
-        return@let getAllProducts(savedEntity.productsIds.convertToIdsList())
+        return@let getAllProducts(savedEntity.productsIds?.convertToIdsList().orEmpty())
     }
 }

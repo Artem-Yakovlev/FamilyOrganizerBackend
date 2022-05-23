@@ -11,7 +11,7 @@ data class Product(
     val quantity: Double?,
     val measure: Measure?,
     val category: Category,
-    val expiryDate: LocalDateTime?
+    val expiryMillis: Long?
 ) {
 
     fun toEntity() = ProductEntity(
@@ -20,7 +20,7 @@ data class Product(
         quantity = quantity,
         measure = measure,
         category = category,
-        expiryDate = expiryDate
+        expiryMillis = expiryMillis
     )
 
     companion object {
@@ -30,7 +30,7 @@ data class Product(
             quantity = entity.quantity,
             measure = entity.measure,
             category = entity.category,
-            expiryDate = entity.expiryDate
+            expiryMillis = entity.expiryMillis
         )
     }
 }

@@ -25,8 +25,8 @@ class ProductEntity(
     @Column(name = "category")
     val category: Category,
 
-    @Column(name = "expiryDate")
-    val expiryDate: LocalDateTime?
+    @Column(name = "expiryMillis")
+    val expiryMillis: Long?
 )
 
 enum class Measure {

@@ -13,9 +13,6 @@ data class FamilyEntity(
     @Column(name = "name")
     val name: String,
 
-//    @Column(name = "fridge_id")
-//    val fridgeId: String,
-
     @Column(name = "members")
     val members: String,
 

@@ -7,6 +7,7 @@ import com.badger.familyorgbe.repository.family.IFamilyRepository
 import com.badger.familyorgbe.repository.users.IUsersRepository
 import com.badger.familyorgbe.utils.converters.convertToEmailList
 import com.badger.familyorgbe.utils.converters.convertToEmailString
+import com.badger.familyorgbe.utils.converters.convertToIdsList
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -23,7 +24,8 @@ class FamilyService {
         val entity = FamilyEntity(
             name = familyName,
             members = authorEmail,
-            invites = ""
+            invites = "",
+            productsIds = ""
         )
         val savedEntity = familyRepository.save(entity)
         return savedEntity.id to getAllFamiliesForEmail(authorEmail)
@@ -61,5 +63,9 @@ class FamilyService {
                     .getAllByEmails(convertToEmailList(family.members))
                     .map(User::fromEntity)
             } ?: emptyList()
+    }
+
+    fun getAllProductsIdsForFamily(familyId: Long): List<Long> {
+        return familyRepository.getFamilyById(familyId)?.productsIds?.convertToIdsList() ?: emptyList()
     }
 }

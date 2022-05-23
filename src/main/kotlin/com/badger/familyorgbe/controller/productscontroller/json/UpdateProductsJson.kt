@@ -1,4 +1,4 @@
-package com.badger.familyorgbe.controller.fridgecontroller.json
+package com.badger.familyorgbe.controller.productscontroller.json
 
 class UpdateProductsJson {
 

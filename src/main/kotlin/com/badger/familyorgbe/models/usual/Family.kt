@@ -2,7 +2,6 @@ package com.badger.familyorgbe.models.usual
 
 import com.badger.familyorgbe.models.entity.FamilyEntity
 import com.badger.familyorgbe.utils.converters.convertToEmailList
-import com.badger.familyorgbe.utils.converters.convertToEmailString
 
 
 data class Family(
@@ -11,12 +10,6 @@ data class Family(
     val members: List<String>,
     val invites: List<String>
 ) {
-
-    fun toEntity() = FamilyEntity(
-        name = name,
-        members = convertToEmailString(members),
-        invites = convertToEmailString(invites)
-    )
 
     companion object {
 

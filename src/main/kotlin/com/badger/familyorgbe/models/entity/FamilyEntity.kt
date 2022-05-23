@@ -17,5 +17,8 @@ data class FamilyEntity(
     val members: String,
 
     @Column(name = "invites")
-    val invites: String
+    val invites: String,
+
+    @Column(name = "products_ids")
+    val productsIds: String
 )

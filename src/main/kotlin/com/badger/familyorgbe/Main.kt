@@ -5,6 +5,7 @@ import com.badger.familyorgbe.repository.jwt.IJwtRepository
 import com.badger.familyorgbe.repository.jwt.JwtRepository
 import com.badger.familyorgbe.service.email.ILettersStorage
 import com.badger.familyorgbe.service.email.LettersStorage
+import com.badger.familyorgbe.service.products.ExpirationTimer
 import com.badger.familyorgbe.service.products.IScanningUtil
 import com.badger.familyorgbe.service.products.ScanningUtil
 import com.badger.familyorgbe.service.users.IOnlineStorage
@@ -20,6 +21,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.core.io.ClassPathResource
+import java.util.*
 import javax.annotation.PostConstruct
 
 private const val SERVICE_ACCOUNT_NAME = "firebase-service-account.json"
@@ -79,6 +81,12 @@ private val logger by lazy {
 
 fun infoLog(message: String) = logger.log(Logger.Level.INFO, message)
 
+fun startTimerTasks() {
+    val timer = Timer()
+    timer.schedule(ExpirationTimer(), 1000, 10000)
+}
+
 fun main(args: Array<String>) {
     runApplication<MainApplication>(*args)
+    startTimerTasks()
 }

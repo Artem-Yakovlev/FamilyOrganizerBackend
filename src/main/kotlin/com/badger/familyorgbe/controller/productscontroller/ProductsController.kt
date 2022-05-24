@@ -1,15 +1,13 @@
 package com.badger.familyorgbe.controller.productscontroller
 
 import com.badger.familyorgbe.controller.familycontroller.json.GetFamilyJson
-import com.badger.familyorgbe.controller.productscontroller.json.AddProductsJson
-import com.badger.familyorgbe.controller.productscontroller.json.DeleteProductsJson
-import com.badger.familyorgbe.controller.productscontroller.json.GetProductsJson
-import com.badger.familyorgbe.controller.productscontroller.json.UpdateProductsJson
+import com.badger.familyorgbe.controller.productscontroller.json.*
 import com.badger.familyorgbe.core.base.BaseAuthedController
 import com.badger.familyorgbe.core.base.rest.BaseResponse
 import com.badger.familyorgbe.core.base.rest.ResponseError
 import com.badger.familyorgbe.repository.jwt.IJwtRepository
 import com.badger.familyorgbe.service.family.FamilyService
+import com.badger.familyorgbe.service.products.IScanningUtil
 import com.badger.familyorgbe.service.products.ProductsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
@@ -27,6 +25,9 @@ class ProductsController : BaseAuthedController() {
 
     @Autowired
     private lateinit var familyService: FamilyService
+
+    @Autowired
+    private lateinit var scanningUtil: IScanningUtil
 
     @PostMapping("getProducts")
     suspend fun getProducts(
@@ -118,6 +119,22 @@ class ProductsController : BaseAuthedController() {
             } ?: BaseResponse(
             error = ResponseError.FAMILY_DOES_NOT_EXISTS,
             data = DeleteProductsJson.Response(products = emptyList())
+        )
+    }
+
+    @PostMapping("getProductsByCode")
+    suspend fun getProductsByCode(
+        @RequestHeader(HttpHeaders.AUTHORIZATION)
+        authHeader: String,
+        @RequestBody
+        form: GetProductsByCodeJson.Form
+    ): BaseResponse<GetProductsByCodeJson.Response> {
+        val result = scanningUtil.getProductsByCode(form.code)
+        return BaseResponse(
+            error = ResponseError.NONE,
+            data = GetProductsByCodeJson.Response(
+                products = result.products
+            )
         )
     }
 }

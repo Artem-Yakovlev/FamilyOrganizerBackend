@@ -5,6 +5,8 @@ import com.badger.familyorgbe.repository.jwt.IJwtRepository
 import com.badger.familyorgbe.repository.jwt.JwtRepository
 import com.badger.familyorgbe.service.email.ILettersStorage
 import com.badger.familyorgbe.service.email.LettersStorage
+import com.badger.familyorgbe.service.products.IScanningUtil
+import com.badger.familyorgbe.service.products.ScanningUtil
 import com.badger.familyorgbe.service.users.IOnlineStorage
 import com.badger.familyorgbe.service.users.OnlineStorage
 import com.badger.familyorgbe.utils.PrepopulateManager
@@ -36,6 +38,11 @@ class MainApplication {
     @Bean
     fun onlineStorage(): IOnlineStorage {
         return OnlineStorage()
+    }
+
+    @Bean
+    fun scanningUtil() : IScanningUtil {
+        return ScanningUtil()
     }
 
     @PostConstruct

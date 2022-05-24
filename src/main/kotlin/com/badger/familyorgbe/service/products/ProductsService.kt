@@ -26,7 +26,16 @@ class ProductsService {
     }.map(Product::fromEntity)
 
     suspend fun addProducts(familyId: Long, products: List<Product>) = getFamilyById(familyId)?.let { entity ->
-        val savedEntities = productRepository.saveAll(products.map(Product::toEntity))
+        val savingProducts = products.map { product ->
+            ProductEntity(
+                name = product.name,
+                quantity = product.quantity,
+                measure = product.measure,
+                category = product.category,
+                expiryMillis = product.expiryMillis
+            )
+        }
+        val savedEntities = productRepository.saveAll(savingProducts)
         val actualIds =
             (entity.productsIds?.convertToIdsList().orEmpty() + savedEntities.map(ProductEntity::id)).sorted()
 

@@ -12,4 +12,4 @@ fun convertToEmailList(dbData: String?): List<String> {
 
 fun String.convertToIdsList() = split(DELIMITER).mapNotNull(String::toLongOrNull)
 
-fun List<Long>.convertToString() = joinToString(DELIMITER)
+fun List<Long>.convertToString() = sorted().distinct().joinToString(DELIMITER)

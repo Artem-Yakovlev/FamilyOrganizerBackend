@@ -4,5 +4,5 @@ interface IOnlineStorage {
 
     fun registerRequest(email: String)
 
-    fun getLastRegisterTime(email: String) : Long?
+    fun getLastRegisterTime(email: String): Long?
 }

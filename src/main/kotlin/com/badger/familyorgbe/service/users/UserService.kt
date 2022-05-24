@@ -3,6 +3,9 @@ package com.badger.familyorgbe.service.users
 import com.badger.familyorgbe.models.entity.UserStatus
 import com.badger.familyorgbe.models.usual.User
 import com.badger.familyorgbe.repository.users.IUsersRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -16,12 +19,14 @@ class UserService : UserDetailsService {
     @Autowired
     private lateinit var userRepository: IUsersRepository
 
-    fun saveUser(user: User): Boolean {
-        return if (userRepository.findByEmail(user.name) != null) {
+    suspend fun saveUser(user: User): Boolean {
+        return if (with(Dispatchers.IO) { userRepository.findByEmail(user.name) } != null) {
             false
         } else {
             val entity = user.toEntity()
-            userRepository.save(entity)
+            with(Dispatchers.IO) {
+                userRepository.save(entity)
+            }
             true
         }
     }
@@ -40,7 +45,7 @@ class UserService : UserDetailsService {
     }
 
     @Transactional
-    fun updateNameOfUser(email: String, name: String): User? {
+    suspend fun updateNameOfUser(email: String, name: String): User? {
         return findUserByEmail(email)?.let { user ->
             userRepository.updateName(
                 email = user.email,
@@ -51,7 +56,7 @@ class UserService : UserDetailsService {
     }
 
     @Transactional
-    fun updateStatusOfUser(email: String, status: UserStatus): User? {
+    suspend fun updateStatusOfUser(email: String, status: UserStatus): User? {
         return findUserByEmail(email)?.let { user ->
             userRepository.updateStatus(
                 email = user.email,

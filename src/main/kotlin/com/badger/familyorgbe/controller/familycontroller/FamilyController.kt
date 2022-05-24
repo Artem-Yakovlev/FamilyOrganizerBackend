@@ -25,7 +25,7 @@ class FamilyController : BaseAuthedController() {
     private lateinit var onlineStorage: IOnlineStorage
 
     @PostMapping("getFamily")
-    fun getFamily(
+    suspend fun getFamily(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
         authHeader: String,
         @RequestBody form: GetFamilyJson.Form
@@ -45,7 +45,7 @@ class FamilyController : BaseAuthedController() {
     }
 
     @PostMapping("getAllMembers")
-    fun getAllMembers(
+    suspend fun getAllMembers(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
         authHeader: String,
         @RequestBody
@@ -71,7 +71,7 @@ class FamilyController : BaseAuthedController() {
     }
 
     @PostMapping("excludeFamilyMember")
-    fun excludeFamilyMember(
+    suspend fun excludeFamilyMember(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
         authHeader: String,
         @RequestBody

@@ -29,7 +29,7 @@ class ProductsController : BaseAuthedController() {
     private lateinit var familyService: FamilyService
 
     @PostMapping("getProducts")
-    fun getProducts(
+    suspend fun getProducts(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
         authHeader: String,
         @RequestBody
@@ -52,7 +52,7 @@ class ProductsController : BaseAuthedController() {
     }
 
     @PostMapping("addProducts")
-    fun addProducts(
+    suspend fun addProducts(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
         authHeader: String,
         @RequestBody
@@ -74,7 +74,7 @@ class ProductsController : BaseAuthedController() {
     }
 
     @PostMapping("updateProducts")
-    fun updateProducts(
+    suspend fun updateProducts(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
         authHeader: String,
         @RequestBody
@@ -84,7 +84,7 @@ class ProductsController : BaseAuthedController() {
     }
 
     @PostMapping("deleteProduct")
-    fun deleteProduct(
+    suspend fun deleteProduct(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
         authHeader: String,
         @RequestBody

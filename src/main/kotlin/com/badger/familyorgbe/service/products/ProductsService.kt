@@ -6,6 +6,7 @@ import com.badger.familyorgbe.repository.family.IFamilyRepository
 import com.badger.familyorgbe.repository.products.IProductsRepository
 import com.badger.familyorgbe.utils.converters.convertToIdsList
 import com.badger.familyorgbe.utils.converters.convertToString
+import kotlinx.coroutines.Dispatchers
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -20,11 +21,14 @@ class ProductsService {
 
     private fun getFamilyById(familyId: Long) = familyRepository.getFamilyById(familyId)
 
-    fun getAllProducts(productsIds: List<Long>) = productRepository.getAllByIds(productsIds).map(Product::fromEntity)
+    suspend fun getAllProducts(productsIds: List<Long>) = with(Dispatchers.IO) {
+        productRepository.getAllByIds(productsIds)
+    }.map(Product::fromEntity)
 
-    fun addProducts(familyId: Long, products: List<Product>) = getFamilyById(familyId)?.let { entity ->
+    suspend fun addProducts(familyId: Long, products: List<Product>) = getFamilyById(familyId)?.let { entity ->
         val savedEntities = productRepository.saveAll(products.map(Product::toEntity))
-        val actualIds = (entity.productsIds?.convertToIdsList().orEmpty() + savedEntities.map(ProductEntity::id)).sorted()
+        val actualIds =
+            (entity.productsIds?.convertToIdsList().orEmpty() + savedEntities.map(ProductEntity::id)).sorted()
 
         val savedEntity = familyRepository.save(
             entity.copy(productsIds = actualIds.convertToString())
@@ -32,7 +36,7 @@ class ProductsService {
         return@let getAllProducts(savedEntity.productsIds?.convertToIdsList().orEmpty())
     }
 
-    fun deleteProducts(familyId: Long, deleteIds: List<Long>) = getFamilyById(familyId)?.let { entity ->
+    suspend fun deleteProducts(familyId: Long, deleteIds: List<Long>) = getFamilyById(familyId)?.let { entity ->
         productRepository.deleteAllById(deleteIds)
         val actualIds = entity.productsIds?.convertToIdsList()?.filter { it !in deleteIds }?.sorted()?.convertToString()
 

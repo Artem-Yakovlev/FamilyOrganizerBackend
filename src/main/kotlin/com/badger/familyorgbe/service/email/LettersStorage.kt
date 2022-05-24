@@ -9,7 +9,7 @@ class LettersStorage : ILettersStorage {
 
     private val storage = mutableMapOf<String, LetterCode>()
 
-    override fun sendNewCodeTo(email: String): ILettersStorage.SendNewCodeResponse {
+    override suspend  fun sendNewCodeTo(email: String): ILettersStorage.SendNewCodeResponse {
         val existedLetterCode = storage[email]
         val currentNumberOfAttempts = existedLetterCode?.numberOfAttempts ?: 0
 
@@ -28,7 +28,7 @@ class LettersStorage : ILettersStorage {
         }
     }
 
-    override fun checkCodeForEmail(email: String, code: String): Boolean {
+    override suspend fun checkCodeForEmail(email: String, code: String): Boolean {
         val isApproved = storage[email]?.code == code
         if (isApproved) {
             storage.remove(email)
@@ -36,7 +36,7 @@ class LettersStorage : ILettersStorage {
         return isApproved
     }
 
-    override fun flushStorage() {
+    override suspend fun flushStorage() {
         val flushTimeSeconds = LocalDateTime.now().second
         storage.forEach { (key, code) ->
             if (abs(flushTimeSeconds - code.sentTime.second) > MAX_TIME_FOR_LETTER) {

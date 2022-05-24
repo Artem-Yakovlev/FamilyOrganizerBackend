@@ -8,6 +8,7 @@ import com.badger.familyorgbe.repository.users.IUsersRepository
 import com.badger.familyorgbe.utils.converters.convertToEmailList
 import com.badger.familyorgbe.utils.converters.convertToEmailString
 import com.badger.familyorgbe.utils.converters.convertToIdsList
+import kotlinx.coroutines.Dispatchers
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -20,30 +21,30 @@ class FamilyService {
     @Autowired
     private lateinit var usersRepository: IUsersRepository
 
-    fun createFamily(authorEmail: String, familyName: String): Pair<Long, List<Family>> {
+    suspend fun createFamily(authorEmail: String, familyName: String): Pair<Long, List<Family>> {
         val entity = FamilyEntity(
             name = familyName,
             members = authorEmail,
             invites = "",
             productsIds = ""
         )
-        val savedEntity = familyRepository.save(entity)
+        val savedEntity = with(Dispatchers.IO) { familyRepository.save(entity) }
         return savedEntity.id to getAllFamiliesForEmail(authorEmail)
     }
 
-    fun getAllFamiliesForEmail(email: String): List<Family> {
-        return familyRepository
-            .getAllFamiliesForEmail(email)
-            .map(Family::fromEntity)
+    suspend fun getAllFamiliesForEmail(email: String): List<Family> {
+        return with(Dispatchers.IO) {
+            familyRepository.getAllFamiliesForEmail(email)
+        }.map(Family::fromEntity)
     }
 
-    fun getFamilyById(id: Long): Family? {
-        val entity = familyRepository.getFamilyById(id)
+    suspend fun getFamilyById(id: Long): Family? {
+        val entity = with(Dispatchers.IO) { familyRepository.getFamilyById(id) }
         return entity?.let(Family::fromEntity)
     }
 
-    fun excludeMemberFromFamily(familyId: Long, email: String): Family? {
-        return familyRepository.getFamilyById(familyId)?.let { entity ->
+    suspend fun excludeMemberFromFamily(familyId: Long, email: String): Family? {
+        return with(Dispatchers.IO) { familyRepository.getFamilyById(familyId) }?.let { entity ->
             val members = convertToEmailList(entity.members).filter { memberEmail -> memberEmail != email }
             val invites = convertToEmailList(entity.invites).filter { inviteEmail -> inviteEmail != email }
 
@@ -56,8 +57,8 @@ class FamilyService {
         }
     }
 
-    fun getAllMembersForFamily(familyId: Long): List<User> {
-        return familyRepository.getFamilyById(familyId)
+    suspend fun getAllMembersForFamily(familyId: Long): List<User> {
+        return with(Dispatchers.IO) { familyRepository.getFamilyById(familyId) }
             ?.let { family ->
                 usersRepository
                     .getAllByEmails(convertToEmailList(family.members))
@@ -65,7 +66,9 @@ class FamilyService {
             } ?: emptyList()
     }
 
-    fun getAllProductsIdsForFamily(familyId: Long): List<Long> {
-        return familyRepository.getFamilyById(familyId)?.productsIds?.convertToIdsList() ?: emptyList()
+    suspend fun getAllProductsIdsForFamily(familyId: Long): List<Long> {
+        return with(Dispatchers.IO) { familyRepository.getFamilyById(familyId) }
+            ?.productsIds?.convertToIdsList()
+            ?: emptyList()
     }
 }

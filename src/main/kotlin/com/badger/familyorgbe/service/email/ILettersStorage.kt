@@ -2,11 +2,11 @@ package com.badger.familyorgbe.service.email
 
 interface ILettersStorage {
 
-    fun sendNewCodeTo(email: String): SendNewCodeResponse
+    suspend fun sendNewCodeTo(email: String): SendNewCodeResponse
 
-    fun checkCodeForEmail(email: String, code: String): Boolean
+    suspend fun checkCodeForEmail(email: String, code: String): Boolean
 
-    fun flushStorage()
+    suspend fun flushStorage()
 
     sealed class SendNewCodeResponse {
         data class Success(

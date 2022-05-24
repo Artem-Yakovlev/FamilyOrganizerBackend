@@ -15,7 +15,7 @@ class EmailService {
     @Autowired
     private lateinit var emailSender: JavaMailSender
 
-    fun sendNewCodeTo(email: String): Boolean {
+    suspend fun sendNewCodeTo(email: String): Boolean {
         storage.flushStorage()
 
         return when (val codeResponse = storage.sendNewCodeTo(email)) {
@@ -36,7 +36,7 @@ class EmailService {
         }
     }
 
-    fun checkCodeForEmail(email: String, code: String): Boolean {
+    suspend fun checkCodeForEmail(email: String, code: String): Boolean {
         storage.flushStorage()
         return storage.checkCodeForEmail(email, code)
     }

@@ -24,7 +24,7 @@ class FamilyAuthController : BaseAuthedController() {
         filter { email in it.members } to filter { email in it.invites }
 
     @PostMapping("getAll")
-    fun getAll(
+    suspend fun getAll(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
         authHeader: String,
         @RequestBody
@@ -39,7 +39,7 @@ class FamilyAuthController : BaseAuthedController() {
     }
 
     @PostMapping("acceptInvite")
-    fun acceptInvite(
+    suspend fun acceptInvite(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
         authHeader: String,
         @RequestBody
@@ -57,7 +57,7 @@ class FamilyAuthController : BaseAuthedController() {
     }
 
     @PostMapping("leave")
-    fun leave(
+    suspend fun leave(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
         authHeader: String,
         @RequestBody
@@ -75,7 +75,7 @@ class FamilyAuthController : BaseAuthedController() {
     }
 
     @PostMapping("create")
-    fun create(
+    suspend fun create(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
         authHeader: String,
         @RequestBody

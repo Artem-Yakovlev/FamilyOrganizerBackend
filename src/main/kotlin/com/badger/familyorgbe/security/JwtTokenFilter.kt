@@ -27,7 +27,7 @@ class JwtTokenFilter : OncePerRequestFilter() {
     @Autowired
     private lateinit var onlineStorage: IOnlineStorage
 
-    override fun doFilterInternal(
+    override  fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         chain: FilterChain

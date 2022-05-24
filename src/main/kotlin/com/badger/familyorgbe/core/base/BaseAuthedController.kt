@@ -10,7 +10,7 @@ class BaseAuthedController : BaseController() {
     @Autowired
     private lateinit var jwtRepository: IJwtRepository
 
-    fun String.getAuthEmail(): String {
+    suspend fun String.getAuthEmail(): String {
         val token = getBearerTokenIfExist()
         return jwtRepository.getEmail(token)
     }

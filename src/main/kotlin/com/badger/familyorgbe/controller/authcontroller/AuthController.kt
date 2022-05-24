@@ -23,7 +23,7 @@ class AuthController : BaseController() {
     private lateinit var emailService: EmailService
 
     @PostMapping("isEmailExists")
-    fun isEmailExists(@RequestBody form: IsEmailExistsJson.Form): IsEmailExistsJson.Response {
+    suspend fun isEmailExists(@RequestBody form: IsEmailExistsJson.Form): IsEmailExistsJson.Response {
         val user = userService.findUserByEmail(email = form.email)
         return IsEmailExistsJson.Response(
             email = form.email,
@@ -32,7 +32,7 @@ class AuthController : BaseController() {
     }
 
     @PostMapping("sendCode")
-    fun sendCode(@RequestBody form: SendCodeJson.Form): SendCodeJson.Response {
+    suspend fun sendCode(@RequestBody form: SendCodeJson.Form): SendCodeJson.Response {
         val isCodeSent = emailService.sendNewCodeTo(form.email)
         return SendCodeJson.Response(
             success = isCodeSent
@@ -40,7 +40,7 @@ class AuthController : BaseController() {
     }
 
     @PostMapping("checkCode")
-    fun checkCode(@RequestBody form: CheckCodeJson.Form): CheckCodeJson.Response = with(form) {
+    suspend fun checkCode(@RequestBody form: CheckCodeJson.Form): CheckCodeJson.Response = with(form) {
         val isCodeApproved = emailService.checkCodeForEmail(
             email = email,
             code = code

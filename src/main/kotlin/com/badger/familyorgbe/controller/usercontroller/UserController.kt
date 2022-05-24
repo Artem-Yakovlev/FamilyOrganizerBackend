@@ -27,7 +27,7 @@ class UserController : BaseController() {
     private lateinit var userService: UserService
 
     @PostMapping("getProfile")
-    fun getProfile(
+    suspend fun getProfile(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
         authHeader: String,
         @RequestBody
@@ -43,7 +43,7 @@ class UserController : BaseController() {
     }
 
     @PostMapping("updateProfileName")
-    fun updateProfileName(
+    suspend fun updateProfileName(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
         authHeader: String,
         @RequestBody
@@ -66,7 +66,7 @@ class UserController : BaseController() {
     }
 
     @PostMapping("updateProfileImage")
-    fun updateProfileImage(
+    suspend fun updateProfileImage(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
         authHeader: String,
         @RequestParam("profileImage")
@@ -82,7 +82,7 @@ class UserController : BaseController() {
     }
 
     @PostMapping("updateStatus")
-    fun updateStatus(
+    suspend fun updateStatus(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
         authHeader: String,
         @RequestBody

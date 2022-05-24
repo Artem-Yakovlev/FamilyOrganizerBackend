@@ -25,7 +25,7 @@ class ProductsService {
         productRepository.getAllByIds(productsIds)
     }.map(Product::fromEntity)
 
-    suspend fun addProducts(familyId: Long, products: List<Product>) = getFamilyById(familyId)?.let { entity ->
+    suspend fun addProducts(familyId: Long, products: List<Product>) = getFamilyById(familyId)?.let { family ->
         val savingProducts = products.map { product ->
             ProductEntity(
                 name = product.name,
@@ -37,12 +37,18 @@ class ProductsService {
         }
         val savedEntities = productRepository.saveAll(savingProducts)
         val actualIds =
-            (entity.productsIds?.convertToIdsList().orEmpty() + savedEntities.map(ProductEntity::id)).sorted()
+            (family.productsIds?.convertToIdsList().orEmpty() + savedEntities.map(ProductEntity::id)).sorted()
 
         val savedEntity = familyRepository.save(
-            entity.copy(productsIds = actualIds.convertToString())
+            family.copy(productsIds = actualIds.convertToString())
         )
         return@let getAllProducts(savedEntity.productsIds?.convertToIdsList().orEmpty())
+    }
+
+    suspend fun updateProduct(familyId: Long, product: Product) = getFamilyById(familyId)?.let {
+        val productEntity = product.toEntity()
+        productRepository.save(productEntity)
+        true
     }
 
     suspend fun deleteProducts(familyId: Long, deleteIds: List<Long>) = getFamilyById(familyId)?.let { entity ->

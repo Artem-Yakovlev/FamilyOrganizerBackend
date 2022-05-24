@@ -1,12 +1,15 @@
 package com.badger.familyorgbe.controller.productscontroller.json
 
+import com.badger.familyorgbe.models.usual.Product
+
 class UpdateProductsJson {
 
-    class Form(
-
+    data class Form(
+        val familyId: Long,
+        val product: Product
     )
 
-    class Response(
-
+    data class Response(
+        val success: Boolean
     )
 }

@@ -80,7 +80,19 @@ class ProductsController : BaseAuthedController() {
         @RequestBody
         form: UpdateProductsJson.Form
     ): BaseResponse<UpdateProductsJson.Response> {
-        TODO()
+        val email = authHeader.getAuthEmail()
+
+        return familyService.getFamilyById(form.familyId)
+            ?.takeIf { family -> family.members.contains(email) }
+            ?.let { family ->
+                val success = productsService.updateProduct(familyId = family.id, product = form.product)
+                BaseResponse(
+                    data = UpdateProductsJson.Response(success = success ?: false)
+                )
+            } ?: BaseResponse(
+            error = ResponseError.FAMILY_DOES_NOT_EXISTS,
+            data = UpdateProductsJson.Response(success = false)
+        )
     }
 
     @PostMapping("deleteProduct")

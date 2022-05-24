@@ -8,6 +8,7 @@ import com.badger.familyorgbe.models.entity.UserStatus
 import com.badger.familyorgbe.models.usual.User
 import com.badger.familyorgbe.repository.family.IFamilyRepository
 import com.badger.familyorgbe.service.family.FamilyService
+import com.badger.familyorgbe.service.fcm.FirebaseMessagingService
 import com.badger.familyorgbe.service.users.IOnlineStorage
 import com.badger.familyorgbe.service.users.UserService
 import com.badger.familyorgbe.utils.converters.convertToEmailList
@@ -34,6 +35,9 @@ class TestController : BaseAuthedController() {
     @Autowired
     private lateinit var userService: UserService
 
+    @Autowired
+    private lateinit var firebaseMessagingService: FirebaseMessagingService
+
 //    @PostMapping("1")
 //    suspend fun getFamily(
 //    ) {
@@ -52,8 +56,11 @@ class TestController : BaseAuthedController() {
 //    }
 
     @PostMapping("1")
-    suspend fun getFamily(
-    ): Pair<Int, Int> {
-        return 1 to 2
+    suspend fun test(
+    ) {
+        val email = "13.zrka@gmail.com"
+        val token = userService.getTokensForEmails(listOf(email)).first().token
+
+        firebaseMessagingService.sendNotification(token)
     }
 }

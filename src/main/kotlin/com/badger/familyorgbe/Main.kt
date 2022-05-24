@@ -10,12 +10,20 @@ import com.badger.familyorgbe.service.products.ScanningUtil
 import com.badger.familyorgbe.service.users.IOnlineStorage
 import com.badger.familyorgbe.service.users.OnlineStorage
 import com.badger.familyorgbe.utils.PrepopulateManager
+import com.google.auth.oauth2.GoogleCredentials
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
+import com.google.firebase.messaging.FirebaseMessaging
 import org.hibernate.annotations.common.util.impl.LoggerFactory
 import org.jboss.logging.Logger
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
+import org.springframework.core.io.ClassPathResource
 import javax.annotation.PostConstruct
+
+private const val SERVICE_ACCOUNT_NAME = "firebase-service-account.json"
+private const val FIREBASE_PROJECT_NAME = "Family organizer"
 
 @SpringBootApplication
 class MainApplication {
@@ -41,13 +49,27 @@ class MainApplication {
     }
 
     @Bean
-    fun scanningUtil() : IScanningUtil {
+    fun scanningUtil(): IScanningUtil {
         return ScanningUtil()
     }
 
     @PostConstruct
     fun postConstruct() {
         PrepopulateManager().prepopulate()
+    }
+
+    @Bean
+    fun firebaseMessaging(): FirebaseMessaging? {
+        val googleCredentials = GoogleCredentials
+            .fromStream(ClassPathResource(SERVICE_ACCOUNT_NAME).inputStream)
+
+        val firebaseOptions = FirebaseOptions
+            .builder()
+            .setCredentials(googleCredentials)
+            .build()
+        val app = FirebaseApp.initializeApp(firebaseOptions, FIREBASE_PROJECT_NAME)
+
+        return FirebaseMessaging.getInstance(app)
     }
 }
 

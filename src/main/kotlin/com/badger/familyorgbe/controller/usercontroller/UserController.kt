@@ -108,7 +108,7 @@ class UserController : BaseController() {
         val token = authHeader.getBearerTokenIfExist()
         val email = jwtRepository.getEmail(token)
 
-        userService.saveToken(email, token)
+        userService.saveToken(email, form.token)
         return SetTokenJson.Response(
             success = true
         )

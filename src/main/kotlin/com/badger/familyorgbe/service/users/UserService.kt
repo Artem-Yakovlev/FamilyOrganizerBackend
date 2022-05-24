@@ -1,7 +1,9 @@
 package com.badger.familyorgbe.service.users
 
+import com.badger.familyorgbe.models.entity.TokenEntity
 import com.badger.familyorgbe.models.entity.UserStatus
 import com.badger.familyorgbe.models.usual.User
+import com.badger.familyorgbe.repository.token.ITokenRepository
 import com.badger.familyorgbe.repository.users.IUsersRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -18,6 +20,9 @@ class UserService : UserDetailsService {
 
     @Autowired
     private lateinit var userRepository: IUsersRepository
+
+    @Autowired
+    private lateinit var tokenRepository: ITokenRepository
 
     suspend fun saveUser(user: User): Boolean {
         return if (with(Dispatchers.IO) { userRepository.findByEmail(user.name) } != null) {
@@ -64,5 +69,14 @@ class UserService : UserDetailsService {
             )
             user.copy(status = status)
         }
+    }
+
+    suspend fun getTokensForEmails(emails: List<String>): List<TokenEntity> {
+        return with(Dispatchers.IO) { tokenRepository.getAllByEmails(emails) }
+    }
+
+    suspend fun saveToken(email: String, token: String) {
+        val entity = TokenEntity(email, token)
+        with(Dispatchers.IO) { tokenRepository.save(entity) }
     }
 }

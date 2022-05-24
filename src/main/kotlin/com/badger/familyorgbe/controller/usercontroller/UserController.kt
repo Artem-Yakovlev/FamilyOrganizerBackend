@@ -1,6 +1,7 @@
 package com.badger.familyorgbe.controller.usercontroller
 
 import com.badger.familyorgbe.controller.usercontroller.json.GetProfileJson
+import com.badger.familyorgbe.controller.usercontroller.json.SetTokenJson
 import com.badger.familyorgbe.controller.usercontroller.json.UpdateProfileNameJson
 import com.badger.familyorgbe.controller.usercontroller.json.UpdateStatusJson
 import com.badger.familyorgbe.core.base.BaseController
@@ -93,6 +94,22 @@ class UserController : BaseController() {
         val status = UserStatus.valueOf(form.status)
         userService.updateStatusOfUser(email, status)
         return UpdateStatusJson.Response(
+            success = true
+        )
+    }
+
+    @PostMapping("setToken")
+    suspend fun setToken(
+        @RequestHeader(HttpHeaders.AUTHORIZATION)
+        authHeader: String,
+        @RequestBody
+        form: SetTokenJson.Form
+    ): SetTokenJson.Response {
+        val token = authHeader.getBearerTokenIfExist()
+        val email = jwtRepository.getEmail(token)
+
+        userService.saveToken(email, token)
+        return SetTokenJson.Response(
             success = true
         )
     }

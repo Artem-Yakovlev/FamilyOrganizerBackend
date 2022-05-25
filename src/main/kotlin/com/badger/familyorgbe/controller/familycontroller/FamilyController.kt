@@ -112,9 +112,11 @@ class FamilyController : BaseAuthedController() {
             ?.takeIf { family -> family.members.contains(email) }
             ?.let { _ ->
                 userService.findUserByEmail(form.memberEmail)?.let {
-                    infoLog(it.toString())
-                    familyService.inviteMemberToFamily(familyId = form.familyId, email = form.memberEmail)
-                } ?: ResponseError.NONE
+                    familyService.inviteMemberToFamily(
+                        familyId = form.familyId, email = form.memberEmail
+                    ) ?: ResponseError.NONE
+
+                } ?: ResponseError.FAMILY_MEMBER_DOES_NOT_EXIST
             } ?: ResponseError.FAMILY_DOES_NOT_EXISTS
 
 

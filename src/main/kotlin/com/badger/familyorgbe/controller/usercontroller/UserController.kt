@@ -1,11 +1,9 @@
 package com.badger.familyorgbe.controller.usercontroller
 
-import com.badger.familyorgbe.controller.usercontroller.json.GetProfileJson
-import com.badger.familyorgbe.controller.usercontroller.json.SetTokenJson
-import com.badger.familyorgbe.controller.usercontroller.json.UpdateProfileNameJson
-import com.badger.familyorgbe.controller.usercontroller.json.UpdateStatusJson
+import com.badger.familyorgbe.controller.usercontroller.json.*
 import com.badger.familyorgbe.core.base.BaseController
 import com.badger.familyorgbe.core.exception.LogicException
+import com.badger.familyorgbe.infoLog
 import com.badger.familyorgbe.models.entity.UserStatus
 import com.badger.familyorgbe.repository.jwt.IJwtRepository
 import com.badger.familyorgbe.service.users.UserService
@@ -74,49 +72,27 @@ class UserController : BaseController() {
         authHeader: String,
         @RequestParam("profileImage")
         multipartFile: MultipartFile
-    ) {
-        val fileName = StringUtils.cleanPath(multipartFile.originalFilename.orEmpty())
+    ): UpdateProfileImageJson.Response {
         val token = authHeader.getBearerTokenIfExist()
         val email = jwtRepository.getEmail(token)
 
-        val uploadDir = "$USER_PHOTOS/$email"
+        val uploadFileName = StringBuilder()
+            .append(email)
+            .append(DOT)
+            .append(
+                StringUtils
+                    .cleanPath(PROFILE_IMAGE_FILE_NAME)
+                    .substringAfterLast(DOT)
+            ).toString()
 
-        saveFile(uploadDir, fileName, multipartFile)
-    }
-//
-//        @RequestMapping("/picture/{id}")
-//    @ResponseBody
-//    public HttpEntity<byte[]> getArticleImage(@PathVariable String id) {
-//
-//        logger.info("Requested picture >> " + id + " <<");
-//
-//        // 1. download img from http://internal-picture-db/id.jpg ...
-//        byte[] image = ...
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.IMAGE_JPEG);
-//        headers.setContentLength(image.length);
-//
-//        return new HttpEntity<byte[]>(image, headers);
-//    }
-
-    @RequestMapping("/picture/{id}")
-    @ResponseBody
-    suspend fun getProfileImage(
-        @RequestHeader(HttpHeaders.AUTHORIZATION)
-        authHeader: String,
-        @PathVariable
-        id: String
-    ): HttpEntity<ByteArray> {
-        val file = File("./user-photos/13.zrka@gmail.com/family-org-father.jpg")
-        val imageBytes = file.readBytes()
-
-        val headers = HttpHeaders().apply {
-            contentType = MediaType.IMAGE_JPEG
-            contentLength = imageBytes.size.toLong()
+        return try {
+            saveFile(USER_PHOTOS, uploadFileName, multipartFile)
+            userService.saveImageAddress(email, "$USER_PHOTOS/$uploadFileName")
+            UpdateProfileImageJson.Response(success = true)
+        } catch (e: Exception) {
+            infoLog(e.toString())
+            UpdateProfileImageJson.Response(success = false)
         }
-
-        return HttpEntity<ByteArray>(imageBytes, headers)
     }
 
     @PostMapping("updateStatus")
@@ -152,7 +128,9 @@ class UserController : BaseController() {
     }
 
     companion object {
+        private const val DOT = "."
         const val USER_PHOTOS = "user-photos"
+        const val PROFILE_IMAGE_FILE_NAME = "profile.jpg"
     }
 
 }

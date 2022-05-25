@@ -1,7 +1,6 @@
 package com.badger.familyorgbe.security
 
 import com.badger.familyorgbe.core.exception.InvalidJwtException
-import com.badger.familyorgbe.infoLog
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.authentication.session.SessionAuthenticationException
 import org.springframework.security.web.csrf.InvalidCsrfTokenException

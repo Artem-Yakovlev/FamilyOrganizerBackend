@@ -1,6 +1,7 @@
 package com.badger.familyorgbe.controller.testcontroller
 
 import com.badger.familyorgbe.controller.familycontroller.json.GetFamilyJson
+import com.badger.familyorgbe.controller.usercontroller.UserController
 import com.badger.familyorgbe.core.base.BaseAuthedController
 import com.badger.familyorgbe.core.base.rest.BaseResponse
 import com.badger.familyorgbe.models.entity.ProductEntity
@@ -15,9 +16,11 @@ import com.badger.familyorgbe.utils.converters.convertToEmailList
 import com.badger.familyorgbe.utils.converters.convertToEmailString
 import kotlinx.coroutines.GlobalScope
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.*
+import java.io.File
 
 @RestController
 @RequestMapping("/test")
@@ -62,5 +65,9 @@ class TestController : BaseAuthedController() {
         val token = userService.getTokensForEmails(listOf(email)).first().token
 
 //        firebaseMessagingService.sendNotification(token)
+    }
+
+    private fun getProfileImagePath(email: String): String {
+        return "./${UserController.USER_PHOTOS}/$email/${UserController.PROFILE_IMAGE_FILE_NAME}"
     }
 }

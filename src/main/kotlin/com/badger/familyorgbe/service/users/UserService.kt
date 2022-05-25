@@ -79,4 +79,9 @@ class UserService : UserDetailsService {
         val entity = TokenEntity(email, token)
         with(Dispatchers.IO) { tokenRepository.save(entity) }
     }
+
+    @Transactional
+    suspend fun saveImageAddress(email: String, imagePath: String) {
+        with(Dispatchers.IO) { userRepository.updateImagePath(email = email, imagePath = imagePath) }
+    }
 }

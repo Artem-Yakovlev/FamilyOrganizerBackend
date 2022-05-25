@@ -30,4 +30,11 @@ interface IUsersRepository : JpaRepository<UserEntity, Long> {
     fun getAllByEmails(
         @Param(value = "emails") emails: List<String>
     ): List<UserEntity>
+
+    @Modifying
+    @Query("update UserEntity u set u.imagePath = :imagePath where u.email = :email")
+    fun updateImagePath(
+        @Param(value = "email") email: String,
+        @Param(value = "imagePath") imagePath: String
+    )
 }

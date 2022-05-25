@@ -12,6 +12,9 @@ class UserEntity(
     @Column(name = "name")
     val name: String,
 
+    @Column(name = "image_path")
+    val imagePath: String? = null,
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     val status: UserStatus

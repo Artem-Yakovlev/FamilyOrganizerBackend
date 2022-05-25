@@ -62,7 +62,13 @@ class ExpirationCheckerUtil {
                         tokens.forEach { token ->
                             familyMessagingService.sendNotification(
                                 token = token,
-                                title = "${messageSource.getMessage("expiration.title", null, locale)} (${family.name})",
+                                title = "${
+                                    messageSource.getMessage(
+                                        "expiration.title",
+                                        null,
+                                        locale
+                                    )
+                                } (${family.name})",
                                 body = body
                             )
 
@@ -74,8 +80,7 @@ class ExpirationCheckerUtil {
     }
 
     companion object {
-        //        private const val EXPIRATION_CHECK_RATE = 1000 * 60 * 60 * 6L
-        private const val EXPIRATION_CHECK_RATE = 1000 * 5L
+        private const val EXPIRATION_CHECK_RATE = 1000 * 60 * 60 * 6L
         private const val CLOSE_TO_EXPIRATION = 1000 * 60 * 60 * 36L
     }
 

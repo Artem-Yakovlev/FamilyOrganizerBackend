@@ -6,16 +6,18 @@ import com.badger.familyorgbe.controller.usercontroller.json.UpdateProfileNameJs
 import com.badger.familyorgbe.controller.usercontroller.json.UpdateStatusJson
 import com.badger.familyorgbe.core.base.BaseController
 import com.badger.familyorgbe.core.exception.LogicException
-import com.badger.familyorgbe.infoLog
 import com.badger.familyorgbe.models.entity.UserStatus
 import com.badger.familyorgbe.repository.jwt.IJwtRepository
 import com.badger.familyorgbe.service.users.UserService
 import com.badger.familyorgbe.utils.saveFile
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.util.StringUtils
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import java.io.File
 
 @RestController
 @RequestMapping("/user")
@@ -80,6 +82,41 @@ class UserController : BaseController() {
         val uploadDir = "$USER_PHOTOS/$email"
 
         saveFile(uploadDir, fileName, multipartFile)
+    }
+//
+//        @RequestMapping("/picture/{id}")
+//    @ResponseBody
+//    public HttpEntity<byte[]> getArticleImage(@PathVariable String id) {
+//
+//        logger.info("Requested picture >> " + id + " <<");
+//
+//        // 1. download img from http://internal-picture-db/id.jpg ...
+//        byte[] image = ...
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.IMAGE_JPEG);
+//        headers.setContentLength(image.length);
+//
+//        return new HttpEntity<byte[]>(image, headers);
+//    }
+
+    @RequestMapping("/picture/{id}")
+    @ResponseBody
+    suspend fun getProfileImage(
+        @RequestHeader(HttpHeaders.AUTHORIZATION)
+        authHeader: String,
+        @PathVariable
+        id: String
+    ): HttpEntity<ByteArray> {
+        val file = File("./user-photos/13.zrka@gmail.com/family-org-father.jpg")
+        val imageBytes = file.readBytes()
+
+        val headers = HttpHeaders().apply {
+            contentType = MediaType.IMAGE_JPEG
+            contentLength = imageBytes.size.toLong()
+        }
+
+        return HttpEntity<ByteArray>(imageBytes, headers)
     }
 
     @PostMapping("updateStatus")

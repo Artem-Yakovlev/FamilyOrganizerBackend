@@ -1,5 +1,6 @@
 package com.badger.familyorgbe.service.family
 
+import com.badger.familyorgbe.core.base.rest.ResponseError
 import com.badger.familyorgbe.models.entity.FamilyEntity
 import com.badger.familyorgbe.models.usual.Family
 import com.badger.familyorgbe.models.usual.User
@@ -60,6 +61,26 @@ class FamilyService {
             )
             val savedEntity = familyRepository.save(updatedEntity)
             Family.fromEntity(savedEntity)
+        }
+    }
+
+    fun inviteMemberToFamily(familyId: Long, email: String): ResponseError? {
+        return familyRepository.getFamilyById(familyId)?.let { entity ->
+            if (entity.members.contains(email)) {
+                return ResponseError.USER_ALREADY_IN_FAMILY
+            }
+
+            if (entity.invites.contains(email)) {
+                return ResponseError.USER_ALREADY_INVITED
+            }
+
+            val invites = convertToEmailList(entity.invites).filter { inviteEmail -> inviteEmail != email }
+
+            val updatedEntity = entity.copy(
+                invites = convertToEmailString(invites + email)
+            )
+            familyRepository.save(updatedEntity)
+            null
         }
     }
 

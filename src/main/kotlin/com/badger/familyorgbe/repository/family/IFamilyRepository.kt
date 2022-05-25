@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
 interface IFamilyRepository : JpaRepository<FamilyEntity, Long> {
-//    @Query("Select c from Registration c where c.place like %:place%").
+    //    @Query("Select c from Registration c where c.place like %:place%").
     @Query(value = "select fam from FamilyEntity fam where fam.members like %:email% or fam.invites like %:email%")
     fun getAllFamiliesForEmail(
         @Param(value = "email") email: String
@@ -16,4 +16,7 @@ interface IFamilyRepository : JpaRepository<FamilyEntity, Long> {
     fun getFamilyById(
         @Param(value = "id") id: Long
     ): FamilyEntity?
+
+    @Query(value = "select fam from FamilyEntity fam where fam.members <> ''")
+    fun getAll(): List<FamilyEntity>
 }

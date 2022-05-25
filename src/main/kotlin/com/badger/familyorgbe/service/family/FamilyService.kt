@@ -21,6 +21,12 @@ class FamilyService {
     @Autowired
     private lateinit var usersRepository: IUsersRepository
 
+    suspend fun getAllFamilies(): List<Family> {
+        return with(Dispatchers.IO) {
+            familyRepository.getAll().map(Family::fromEntity)
+        }
+    }
+
     suspend fun createFamily(authorEmail: String, familyName: String): Pair<Long, List<Family>> {
         val entity = FamilyEntity(
             name = familyName,

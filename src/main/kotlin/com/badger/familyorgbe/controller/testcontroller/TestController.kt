@@ -61,6 +61,6 @@ class TestController : BaseAuthedController() {
         val email = "13.zrka@gmail.com"
         val token = userService.getTokensForEmails(listOf(email)).first().token
 
-        firebaseMessagingService.sendNotification(token)
+//        firebaseMessagingService.sendNotification(token)
     }
 }

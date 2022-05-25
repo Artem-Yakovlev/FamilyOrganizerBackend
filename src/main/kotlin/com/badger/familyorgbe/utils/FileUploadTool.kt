@@ -1,10 +1,22 @@
 package com.badger.familyorgbe.utils
 
 import org.springframework.web.multipart.MultipartFile
+import java.io.File
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+
+fun deleteImageForEmail(
+    dir: String,
+    email: String
+) {
+    File(dir).list().filter { fileName ->
+        fileName.contains(email)
+    }.forEach { fileName ->
+        File(dir, fileName).delete()
+    }
+}
 
 fun saveFile(
     uploadDir: String?,

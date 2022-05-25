@@ -7,6 +7,7 @@ import com.badger.familyorgbe.infoLog
 import com.badger.familyorgbe.models.entity.UserStatus
 import com.badger.familyorgbe.repository.jwt.IJwtRepository
 import com.badger.familyorgbe.service.users.UserService
+import com.badger.familyorgbe.utils.deleteImageForEmail
 import com.badger.familyorgbe.utils.saveFile
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
@@ -16,6 +17,7 @@ import org.springframework.util.StringUtils
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
+import kotlin.random.Random
 
 @RestController
 @RequestMapping("/user")
@@ -78,6 +80,7 @@ class UserController : BaseController() {
 
         val uploadFileName = StringBuilder()
             .append(email)
+            .append(Random.nextLong().toString())
             .append(DOT)
             .append(
                 StringUtils
@@ -86,6 +89,7 @@ class UserController : BaseController() {
             ).toString()
 
         return try {
+            deleteImageForEmail(USER_PHOTOS, email)
             saveFile(USER_PHOTOS, uploadFileName, multipartFile)
             userService.saveImageAddress(email, "$USER_PHOTOS/$uploadFileName")
             UpdateProfileImageJson.Response(success = true)

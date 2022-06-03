@@ -33,7 +33,8 @@ class FamilyService {
             name = familyName,
             members = authorEmail,
             invites = "",
-            productsIds = ""
+            productsIds = "",
+            tasks = emptyList()
         )
         val savedEntity = with(Dispatchers.IO) { familyRepository.save(entity) }
         return savedEntity.id to getAllFamiliesForEmail(authorEmail)

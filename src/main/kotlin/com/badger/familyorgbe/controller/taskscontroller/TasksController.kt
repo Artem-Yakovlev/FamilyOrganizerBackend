@@ -53,7 +53,7 @@ class TasksController : BaseAuthedController() {
             )
         )
 
-        tasksService.createFamilyTask(task)
+//        tasksService.createFamilyTask(task)
 
         return BaseResponse(data = CreateJson.Response(tasksService.getById(1)))
     }

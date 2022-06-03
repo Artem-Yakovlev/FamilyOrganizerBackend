@@ -35,7 +35,10 @@ class TaskEntity(
     @Column(name = "subtasks")
     @OneToMany(cascade = [CascadeType.ALL])
     @JoinColumn(name = "task_id", nullable = false)
-    val subtasks: List<SubtaskEntity>
+    val subtasks: List<SubtaskEntity>,
+
+    @Column(name = "family_id", insertable = false, updatable = false)
+    val familyId: Long = 0
 )
 
 

@@ -15,6 +15,6 @@ class SubtaskEntity(
     @Column(name = "checked")
     val checked: Boolean,
 
-    @Column(name = "task_id")
-    val taskId: Long
+    @Column(name = "task_id", insertable = false, updatable = false)
+    val taskId: Long = 0
 )

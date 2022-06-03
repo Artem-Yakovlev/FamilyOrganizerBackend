@@ -7,11 +7,9 @@ data class Subtask(
     val text: String,
     val checked: Boolean
 ) {
-    fun toEntity(taskId: Long) = SubtaskEntity(
-        id = id ?: 0,
+    fun toEntity() = SubtaskEntity(
         text = text,
         checked = checked,
-        taskId = taskId
     )
 
     companion object {

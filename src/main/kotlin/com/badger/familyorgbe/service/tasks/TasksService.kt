@@ -27,21 +27,11 @@ class TasksService {
     private lateinit var taskProductsRepository: IFamilyTaskProductsRepository
 
     @Transactional
-    suspend fun createFamilyTask(task: Task): Task? = coroutineScope {
+    suspend fun createFamilyTask(task: Task) = coroutineScope {
         val savedTaskEntity = with(Dispatchers.IO) { tasksRepository.save(task.toSavingEntity()) }
-        val products = async(Dispatchers.IO) {
-            taskProductsRepository.saveAll(task.products.map { it.toEntity(savedTaskEntity.id) })
-        }
-        val subtasks = async(Dispatchers.IO) {
-            subtasksRepository.saveAll(task.subtasks.map { it.toEntity(savedTaskEntity.id) })
-        }
+    }
 
-        products.await()
-        subtasks.await()
-
-        return@coroutineScope withContext(Dispatchers.IO) {
-            val entity = tasksRepository.getById(savedTaskEntity.id)
-            Task.fromEntity(entity)
-        }
+    suspend fun getById(taskId: Long): Task? {
+        return with(Dispatchers.IO) { Task.fromEntity(tasksRepository.getById(taskId)) }
     }
 }

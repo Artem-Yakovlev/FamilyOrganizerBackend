@@ -4,12 +4,9 @@ import com.badger.familyorgbe.models.usual.task.Task
 
 class CreateJson {
 
-    data class Form(
-        val familyId: Long,
-        val task: Task
+    class Form
+
+    data class Response(
+        val task: Task?
     )
-
-    class Response {
-
-    }
 }

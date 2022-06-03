@@ -1,5 +1,6 @@
 package com.badger.familyorgbe.models.entity.task
 
+import com.badger.familyorgbe.models.usual.task.Task
 import javax.persistence.*
 
 @Entity
@@ -24,6 +25,9 @@ class TaskCategoryEntity(
 
     @Column(name = "days")
     val days: String? = null,
+
+    @Column(name = "task_id", insertable = false, updatable = false)
+    val taskId: Long = 0
 )
 
 enum class TaskCategoryType {

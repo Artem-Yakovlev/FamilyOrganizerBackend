@@ -9,9 +9,10 @@ class TaskEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-    @MapsId
-    val category: TaskCategoryEntity,
+//    @Column(name = "category")
+//    @OneToMany(cascade = [CascadeType.ALL])
+//    @JoinColumn(name = "task_id", nullable = false)
+//    val category: List<TaskCategoryEntity>,
 
     @Column(name = "status")
     @Enumerated(value = EnumType.STRING)
@@ -26,13 +27,13 @@ class TaskEntity(
     @Column(name = "notifications")
     val notifications: String,
 
-    @Column(name = "products")
-    @OneToMany
-    @JoinColumn(name = "task_id", nullable = false)
-    val products: List<TaskProductEntity>,
+//    @Column(name = "products")
+//    @OneToMany(cascade = [CascadeType.ALL])
+//    @JoinColumn(name = "task_id", nullable = false)
+//    val products: List<TaskProductEntity>,
 
     @Column(name = "subtasks")
-    @OneToMany
+    @OneToMany(cascade = [CascadeType.ALL])
     @JoinColumn(name = "task_id", nullable = false)
     val subtasks: List<SubtaskEntity>
 )

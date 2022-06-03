@@ -34,27 +34,31 @@ sealed class TaskCategory {
         ) : Recurring()
     }
 
-    fun toEntity() = when (this) {
+    fun toEntity(taskId: Long) = when (this) {
         is OneShot -> TaskCategoryEntity(
             type = TaskCategoryType.ONE_SHOT,
-            isTimeImportant = isTimeImportant
+            isTimeImportant = isTimeImportant,
+            taskId = taskId
         )
         is OneTime -> TaskCategoryEntity(
             type = TaskCategoryType.ONE_TIME,
             dateTime = localDateTime,
-            isTimeImportant = isTimeImportant
+            isTimeImportant = isTimeImportant,
+            taskId = taskId
 
         )
         is Recurring.DaysOfWeek -> TaskCategoryEntity(
             type = TaskCategoryType.DAYS_OF_WEEK,
             days = days.convertToString(),
             time = time,
-            isTimeImportant = isTimeImportant
+            isTimeImportant = isTimeImportant,
+            taskId = taskId
         )
         is Recurring.EveryYear -> TaskCategoryEntity(
             type = TaskCategoryType.EVERY_WEEK,
             dateTime = localDateTime,
-            isTimeImportant = isTimeImportant
+            isTimeImportant = isTimeImportant,
+            taskId = taskId
         )
     }
 

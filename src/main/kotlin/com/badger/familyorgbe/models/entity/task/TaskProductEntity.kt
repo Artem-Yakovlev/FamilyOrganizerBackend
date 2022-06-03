@@ -23,6 +23,6 @@ class TaskProductEntity(
     @Enumerated(value = EnumType.STRING)
     val measure: Measure?,
 
-    @Column(name = "task_id")
-    val taskId: Long
+    @Column(name = "task_id", insertable = false, updatable = false)
+    val taskId: Long = 0
 )

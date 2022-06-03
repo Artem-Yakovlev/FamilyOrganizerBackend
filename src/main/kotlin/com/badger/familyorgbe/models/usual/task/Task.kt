@@ -18,24 +18,26 @@ data class Task(
 
     fun toSavingEntity() = TaskEntity(
         id = id,
-        category = category.toEntity(),
+//        category = listOf(category.toEntity(id)),
         status = status,
         title = title,
         description = description,
         notifications = convertToEmailString(notifications),
-        products = emptyList(),
-        subtasks = emptyList()
+//        products = emptyList(),
+        subtasks = subtasks.map(Subtask::toEntity)
     )
 
     companion object {
         fun fromEntity(entity: TaskEntity) = Task(
             id = entity.id,
-            category = TaskCategory.fromEntity(entity.category),
+//            category = TaskCategory.fromEntity(entity.category.first()),
+            category = TaskCategory.OneShot,
             status = entity.status,
             title = entity.title,
             description = entity.description,
             notifications = convertToEmailList(entity.notifications),
-            products = entity.products.map(TaskProduct::fromEntity),
+//            products = entity.products.map(TaskProduct::fromEntity),
+            products = emptyList(),
             subtasks = entity.subtasks.map(Subtask::fromEntity)
         )
     }

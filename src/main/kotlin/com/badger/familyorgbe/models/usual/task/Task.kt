@@ -18,7 +18,7 @@ data class Task(
 
     fun toSavingEntity() = TaskEntity(
         id = id,
-//        category = listOf(category.toEntity(id)),
+        category = listOf(category.toEntity(id)),
         status = status,
         title = title,
         description = description,
@@ -30,8 +30,7 @@ data class Task(
     companion object {
         fun fromEntity(entity: TaskEntity) = Task(
             id = entity.id,
-//            category = TaskCategory.fromEntity(entity.category.first()),
-            category = TaskCategory.OneShot,
+            category = TaskCategory.fromEntity(entity.category.first()),
             status = entity.status,
             title = entity.title,
             description = entity.description,

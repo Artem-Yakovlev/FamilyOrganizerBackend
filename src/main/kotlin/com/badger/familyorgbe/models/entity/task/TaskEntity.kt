@@ -9,10 +9,10 @@ class TaskEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-//    @Column(name = "category")
-//    @OneToMany(cascade = [CascadeType.ALL])
-//    @JoinColumn(name = "task_id", nullable = false)
-//    val category: List<TaskCategoryEntity>,
+    @Column(name = "category")
+    @OneToMany(cascade = [CascadeType.ALL])
+    @JoinColumn(name = "task_id", nullable = false)
+    val category: List<TaskCategoryEntity>,
 
     @Column(name = "status")
     @Enumerated(value = EnumType.STRING)

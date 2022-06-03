@@ -27,10 +27,10 @@ class TaskEntity(
     @Column(name = "notifications")
     val notifications: String,
 
-//    @Column(name = "products")
-//    @OneToMany(cascade = [CascadeType.ALL])
-//    @JoinColumn(name = "task_id", nullable = false)
-//    val products: List<TaskProductEntity>,
+    @Column(name = "products")
+    @OneToMany(cascade = [CascadeType.ALL])
+    @JoinColumn(name = "task_id", nullable = false)
+    val products: List<TaskProductEntity>,
 
     @Column(name = "subtasks")
     @OneToMany(cascade = [CascadeType.ALL])

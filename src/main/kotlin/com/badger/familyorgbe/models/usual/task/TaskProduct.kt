@@ -11,13 +11,11 @@ data class TaskProduct(
     val amount: Double?,
     val measure: Measure?
 ) {
-    fun toEntity(taskId: Long) = TaskProductEntity(
-        id = id ?: 0,
+    fun toEntity() = TaskProductEntity(
         checked = checked,
         title = title,
         amount = amount,
-        measure = measure,
-        taskId = taskId
+        measure = measure
     )
 
     companion object {

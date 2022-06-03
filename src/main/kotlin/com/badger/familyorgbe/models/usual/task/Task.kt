@@ -23,7 +23,7 @@ data class Task(
         title = title,
         description = description,
         notifications = convertToEmailString(notifications),
-//        products = emptyList(),
+        products = products.map(TaskProduct::toEntity),
         subtasks = subtasks.map(Subtask::toEntity)
     )
 
@@ -36,8 +36,7 @@ data class Task(
             title = entity.title,
             description = entity.description,
             notifications = convertToEmailList(entity.notifications),
-//            products = entity.products.map(TaskProduct::fromEntity),
-            products = emptyList(),
+            products = entity.products.map(TaskProduct::fromEntity),
             subtasks = entity.subtasks.map(Subtask::fromEntity)
         )
     }

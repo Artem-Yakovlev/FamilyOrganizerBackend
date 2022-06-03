@@ -12,10 +12,9 @@ class SubtaskEntity(
     @Column(name = "text")
     val text: String,
 
-    @ManyToOne
-    @JoinColumn(name = "task_id", nullable = false)
-    val task: TaskEntity,
-
     @Column(name = "checked")
-    val checked: Boolean
+    val checked: Boolean,
+
+    @Column(name = "task_id")
+    val taskId: Long
 )

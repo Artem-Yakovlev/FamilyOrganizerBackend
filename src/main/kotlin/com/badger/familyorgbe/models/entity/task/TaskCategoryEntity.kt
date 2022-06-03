@@ -4,7 +4,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "taskcategories")
-class TaskCategory(
+class TaskCategoryEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
@@ -14,16 +14,16 @@ class TaskCategory(
     val type: TaskCategoryType,
 
     @Column(name = "time_important")
-    val isTimeImportant: Boolean,
+    val isTimeImportant: Boolean = false,
 
     @Column(name = "date_time")
-    val dateTime: Long?,
+    val dateTime: Long? = null,
 
     @Column(name = "time")
-    val time: Long?,
+    val time: Long? = null,
 
     @Column(name = "days")
-    val days: String?,
+    val days: String? = null,
 )
 
 enum class TaskCategoryType {

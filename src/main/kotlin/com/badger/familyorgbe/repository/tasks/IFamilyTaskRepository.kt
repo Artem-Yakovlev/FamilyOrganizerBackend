@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
 interface IFamilyTaskRepository : JpaRepository<TaskEntity, Long> {
+    @Query(value = "select task from TaskEntity task")
+    fun getAllTasks(): List<TaskEntity>
 
     @Query(value = "select task from TaskEntity task where task.familyId = :familyId")
     fun getAllTasksForFamily(

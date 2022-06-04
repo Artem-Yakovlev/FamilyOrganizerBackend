@@ -7,12 +7,15 @@ import com.badger.familyorgbe.repository.family.IFamilyRepository
 import com.badger.familyorgbe.repository.tasks.IFamilySubtaskRepository
 import com.badger.familyorgbe.repository.tasks.IFamilyTaskProductsRepository
 import com.badger.familyorgbe.repository.tasks.IFamilyTaskRepository
+import com.badger.familyorgbe.utils.converters.convertToNumbersList
 import com.badger.familyorgbe.utils.toInstantAtZone
 import kotlinx.coroutines.Dispatchers
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDateTime
+import java.time.LocalDate
 
 @Service
 class TasksService {
@@ -165,4 +168,46 @@ class TasksService {
         }
         return null
     }
+
+    @Transactional
+    suspend fun clearTasksIfNeed() {
+        with(Dispatchers.IO) {
+            familyRepository.getAll().forEach { family ->
+                val tasks = family.tasks.map(::clearTaskIfNeed)
+                familyRepository.save(family.copy(tasks = tasks))
+            }
+        }
+    }
+
+    private fun clearTaskIfNeed(task: TaskEntity): TaskEntity {
+        val category = task.category.firstOrNull() ?: return task
+        return when (category.type) {
+            TaskCategoryType.DAYS_OF_WEEK -> {
+                val now = LocalDateTime.now()
+                val daysOfWeek = category.days?.convertToNumbersList()?.map(DayOfWeek::of).orEmpty()
+                val clearingDateTime = category.clearingTime.toInstantAtZone().toLocalDateTime()
+                if (now.dayOfMonth != clearingDateTime.dayOfMonth && now.dayOfWeek in daysOfWeek) {
+                    clearTask(task)
+                } else {
+                    task
+                }
+            }
+            TaskCategoryType.EVERY_YEAR -> {
+                val now = LocalDateTime.now()
+                val clearingDateTime = category.clearingTime.toInstantAtZone().toLocalDateTime()
+                if (clearingDateTime.year != now.year) {
+                    clearTask(task)
+                } else {
+                    task
+                }
+            }
+            else -> task
+        }
+    }
+
+    private fun clearTask(task: TaskEntity) = task.copy(
+        status = TaskStatus.ACTIVE,
+        products = task.products.map { it.copy(checked = false) },
+        subtasks = task.subtasks.map { it.copy(checked = false) },
+    )
 }

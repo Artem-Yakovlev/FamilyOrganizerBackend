@@ -15,7 +15,7 @@ class TaskCategory(
     val isTimeImportant: Boolean = false,
     val dateTime: Long? = null,
     val time: Long? = null,
-    val days: List<Int>? = null,
+    val days: List<Int>? = null
 ) {
     fun toEntity(taskId: Long) = TaskCategoryEntity(
         type = type,

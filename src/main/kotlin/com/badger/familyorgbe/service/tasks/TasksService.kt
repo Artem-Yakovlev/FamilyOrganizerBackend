@@ -1,6 +1,7 @@
 package com.badger.familyorgbe.service.tasks
 
 import com.badger.familyorgbe.infoLog
+import com.badger.familyorgbe.models.entity.task.TaskStatus
 import com.badger.familyorgbe.models.usual.task.Subtask
 import com.badger.familyorgbe.models.usual.task.Task
 import com.badger.familyorgbe.repository.tasks.IFamilySubtaskRepository
@@ -27,11 +28,31 @@ class TasksService {
     private lateinit var taskProductsRepository: IFamilyTaskProductsRepository
 
     @Transactional
-    suspend fun createFamilyTask(task: Task) = coroutineScope {
-        val savedTaskEntity = with(Dispatchers.IO) { tasksRepository.save(task.toSavingEntity()) }
+    suspend fun createFamilyTask(task: Task) {
+        with(Dispatchers.IO) { tasksRepository.save(task.toSavingEntity()) }
     }
+
+    @Transactional
+    suspend fun modifyFamilyTask(task: Task) {
+
+    }
+
 
     suspend fun getById(taskId: Long): Task? {
         return with(Dispatchers.IO) { Task.fromEntity(tasksRepository.getById(taskId)) }
+    }
+
+    suspend fun getAllTasksByFamilyId(familyId: Long): List<Task> {
+        return with(Dispatchers.IO) { tasksRepository.getAllTasksForFamily(familyId).map(Task::fromEntity) }
+    }
+
+    @Transactional
+    suspend fun deleteFamilyTaskById(familyId: Long, taskId: Long) {
+        with(Dispatchers.IO) {}
+    }
+
+    @Transactional
+    suspend fun changeTaskStatus(familyId: Long, taskId: Task, status: TaskStatus) {
+        with(Dispatchers.IO) {}
     }
 }

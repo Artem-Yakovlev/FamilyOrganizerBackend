@@ -100,3 +100,8 @@ class FamilyService {
             ?: emptyList()
     }
 }
+
+suspend fun <T> FamilyService.actionIfHasAccess(familyId: Long, email: String, action: suspend () -> T): T? =
+    getFamilyById(familyId)
+        ?.takeIf { family -> family.members.contains(email) }
+        ?.let { action() }

@@ -3,11 +3,10 @@ package com.badger.familyorgbe.controller.taskscontroller.json
 class DeleteJson {
 
 
-    class Form {
+    data class Form(
+        val familyId: Long,
+        val taskId: Long
+    )
 
-    }
-
-    class Response {
-
-    }
+    class Response
 }

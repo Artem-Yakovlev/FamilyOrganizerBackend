@@ -1,6 +1,5 @@
 package com.badger.familyorgbe.service.tasks
 
-import com.badger.familyorgbe.infoLog
 import com.badger.familyorgbe.models.entity.task.*
 import com.badger.familyorgbe.models.usual.task.Task
 import com.badger.familyorgbe.repository.family.IFamilyRepository
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDateTime
-import java.time.LocalDate
 
 @Service
 class TasksService {

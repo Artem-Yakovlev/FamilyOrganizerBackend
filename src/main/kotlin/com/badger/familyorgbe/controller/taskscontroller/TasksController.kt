@@ -77,7 +77,13 @@ class TasksController : BaseAuthedController() {
         val email = authHeader.getAuthEmail()
 
         return familyService.actionIfHasAccess(familyId = form.familyId, email = email) {
-            tasksService.modifyFamilyTask(familyId = form.familyId, task = form.task)
+            tasksService.modifyFamilyTask(
+                familyId = form.familyId,
+                task = form.task
+            )
+            tasksService.updateFamilyTasksStatus(
+                familyId = form.familyId
+            )
             BaseResponse(data = ModifyJson.Response())
         } ?: BaseResponse(error = ResponseError.FAMILY_DOES_NOT_EXISTS, data = ModifyJson.Response())
     }
@@ -95,6 +101,9 @@ class TasksController : BaseAuthedController() {
                 taskId = form.taskId,
                 subtaskId = form.subtaskId,
                 productId = form.productId
+            )
+            tasksService.updateFamilyTasksStatus(
+                familyId = form.familyId
             )
             BaseResponse(data = CheckSubtaskOrProductJson.Response())
         } ?: BaseResponse(error = ResponseError.FAMILY_DOES_NOT_EXISTS, data = CheckSubtaskOrProductJson.Response())

@@ -1,21 +1,18 @@
 package com.badger.familyorgbe.service.tasks
 
+import com.badger.familyorgbe.infoLog
 import com.badger.familyorgbe.models.entity.task.*
 import com.badger.familyorgbe.models.usual.task.Task
 import com.badger.familyorgbe.repository.family.IFamilyRepository
 import com.badger.familyorgbe.repository.tasks.IFamilySubtaskRepository
 import com.badger.familyorgbe.repository.tasks.IFamilyTaskProductsRepository
 import com.badger.familyorgbe.repository.tasks.IFamilyTaskRepository
-import com.badger.familyorgbe.utils.betweenDayOfWeeks
 import com.badger.familyorgbe.utils.toInstantAtZone
 import kotlinx.coroutines.Dispatchers
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.threeten.bp.DayOfWeek
-import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
-import org.threeten.bp.LocalTime
 
 @Service
 class TasksService {
@@ -129,17 +126,21 @@ class TasksService {
     suspend fun updateFamilyTasksStatus(familyId: Long) {
         with(Dispatchers.IO) {
             familyRepository.getFamilyById(familyId)?.let { family ->
-                family.tasks.map { task -> updateTaskStatus(familyId, task) }
+                family.tasks.forEach { task ->
+                    needToUpdateTaskStatus(family.id, task)?.let { status ->
+                        tasksRepository.updateStatus(taskId = task.id, status = status)
+                    }
+                }
             }
         }
     }
 
     @Transactional
-    suspend fun updateTaskStatus(familyId: Long, task: TaskEntity) {
+    suspend fun needToUpdateTaskStatus(familyId: Long, task: TaskEntity): TaskStatus? {
         if (task.status == TaskStatus.ACTIVE) {
             val finished = task.products.all(TaskProductEntity::checked) && task.subtasks.all(SubtaskEntity::checked)
             if (finished) {
-                changeTaskStatus(familyId, task.id, TaskStatus.FINISHED)
+                return TaskStatus.FINISHED
             } else {
                 val category = task.category.first()
                 val failed = when (category.type) {
@@ -158,9 +159,10 @@ class TasksService {
                     }
                 }
                 if (failed) {
-                    changeTaskStatus(familyId, task.id, TaskStatus.FAILED)
+                    return TaskStatus.FAILED
                 }
             }
         }
+        return null
     }
 }

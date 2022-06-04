@@ -12,6 +12,8 @@ import com.badger.familyorgbe.models.usual.task.TaskCategory
 import com.badger.familyorgbe.models.usual.task.TaskProduct
 import com.badger.familyorgbe.service.family.FamilyService
 import com.badger.familyorgbe.service.family.actionIfHasAccess
+import com.badger.familyorgbe.service.tasks.INotificationStorage
+import com.badger.familyorgbe.service.tasks.NotificationsStorage
 import com.badger.familyorgbe.service.tasks.TasksService
 import org.hibernate.annotations.Check
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,6 +30,9 @@ class TasksController : BaseAuthedController() {
 
     @Autowired
     private lateinit var familyService: FamilyService
+
+    @Autowired
+    private lateinit var notificationsStorage: INotificationStorage
 
     @PostMapping("getAll")
     suspend fun getAll(
@@ -84,6 +89,11 @@ class TasksController : BaseAuthedController() {
             tasksService.updateFamilyTasksStatus(
                 familyId = form.familyId
             )
+            notificationsStorage.setChangedTaskTime(
+                taskId = form.task.id,
+                authorEmail = email
+            )
+
             BaseResponse(data = ModifyJson.Response())
         } ?: BaseResponse(error = ResponseError.FAMILY_DOES_NOT_EXISTS, data = ModifyJson.Response())
     }
@@ -104,6 +114,10 @@ class TasksController : BaseAuthedController() {
             )
             tasksService.updateFamilyTasksStatus(
                 familyId = form.familyId
+            )
+            notificationsStorage.setChangedTaskTime(
+                taskId = form.taskId,
+                authorEmail = email
             )
             BaseResponse(data = CheckSubtaskOrProductJson.Response())
         } ?: BaseResponse(error = ResponseError.FAMILY_DOES_NOT_EXISTS, data = CheckSubtaskOrProductJson.Response())

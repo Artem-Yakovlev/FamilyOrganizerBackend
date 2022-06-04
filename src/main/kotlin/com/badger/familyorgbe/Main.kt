@@ -10,6 +10,8 @@ import com.badger.familyorgbe.service.products.ExpirationCheckerUtil
 import com.badger.familyorgbe.service.products.IScanningUtil
 import com.badger.familyorgbe.service.products.ProductsService
 import com.badger.familyorgbe.service.products.ScanningUtil
+import com.badger.familyorgbe.service.tasks.INotificationStorage
+import com.badger.familyorgbe.service.tasks.NotificationsStorage
 import com.badger.familyorgbe.service.users.IOnlineStorage
 import com.badger.familyorgbe.service.users.OnlineStorage
 import com.badger.familyorgbe.service.users.UserService
@@ -53,6 +55,11 @@ class MainApplication {
     @Bean
     fun onlineStorage(): IOnlineStorage {
         return OnlineStorage()
+    }
+
+    @Bean
+    fun notificationsStorage(): INotificationStorage {
+        return NotificationsStorage()
     }
 
     @Bean

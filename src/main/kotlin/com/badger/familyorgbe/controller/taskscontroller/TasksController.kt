@@ -76,7 +76,7 @@ class TasksController : BaseAuthedController() {
         val email = authHeader.getAuthEmail()
 
         return familyService.actionIfHasAccess(familyId = form.familyId, email = email) {
-            tasksService.modifyFamilyTask(task = form.task)
+            tasksService.modifyFamilyTask(familyId = form.familyId, task = form.task)
             BaseResponse(data = ModifyJson.Response())
         } ?: BaseResponse(error = ResponseError.FAMILY_DOES_NOT_EXISTS, data = ModifyJson.Response())
     }

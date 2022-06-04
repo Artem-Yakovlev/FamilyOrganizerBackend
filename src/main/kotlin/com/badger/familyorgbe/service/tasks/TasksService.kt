@@ -1,6 +1,7 @@
 package com.badger.familyorgbe.service.tasks
 
 import com.badger.familyorgbe.infoLog
+import com.badger.familyorgbe.models.entity.task.TaskEntity
 import com.badger.familyorgbe.models.entity.task.TaskStatus
 import com.badger.familyorgbe.models.usual.task.Subtask
 import com.badger.familyorgbe.models.usual.task.Task
@@ -41,8 +42,18 @@ class TasksService {
     }
 
     @Transactional
-    suspend fun modifyFamilyTask(task: Task) {
-
+    suspend fun modifyFamilyTask(familyId: Long, task: Task) {
+        with(Dispatchers.IO) {
+            familyRepository.getFamilyById(id = familyId)?.let { family ->
+                familyRepository.save(family.copy(tasks = family.tasks.map { entity ->
+                    if (task.id == entity.id) {
+                        task.toSavingEntity()
+                    } else {
+                        entity
+                    }
+                }))
+            }
+        }
     }
 
 

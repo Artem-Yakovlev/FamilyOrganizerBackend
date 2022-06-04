@@ -5,7 +5,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "taskproducts")
-class TaskProductEntity(
+data class TaskProductEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,

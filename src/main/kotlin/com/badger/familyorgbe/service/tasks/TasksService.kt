@@ -1,18 +1,12 @@
 package com.badger.familyorgbe.service.tasks
 
-import com.badger.familyorgbe.infoLog
-import com.badger.familyorgbe.models.entity.task.TaskEntity
 import com.badger.familyorgbe.models.entity.task.TaskStatus
-import com.badger.familyorgbe.models.usual.task.Subtask
 import com.badger.familyorgbe.models.usual.task.Task
 import com.badger.familyorgbe.repository.family.IFamilyRepository
 import com.badger.familyorgbe.repository.tasks.IFamilySubtaskRepository
 import com.badger.familyorgbe.repository.tasks.IFamilyTaskProductsRepository
 import com.badger.familyorgbe.repository.tasks.IFamilyTaskRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -69,6 +63,40 @@ class TasksService {
     suspend fun deleteFamilyTaskById(familyId: Long, taskId: Long) {
         with(Dispatchers.IO) {
             tasksRepository.deleteById(taskId)
+        }
+    }
+
+    @Transactional
+    suspend fun checkSubtask(familyId: Long, taskId: Long, subtaskId: Long?, productId: Long?) {
+        with(Dispatchers.IO) {
+            familyRepository.getFamilyById(id = familyId)?.let { family ->
+                val task = family.tasks.find { it.id == taskId }
+
+                val subtasks = task?.subtasks?.map { subtask ->
+                    if (subtask.id == subtaskId) {
+                        subtask.copy(checked = !subtask.checked)
+                    } else {
+                        subtask
+                    }
+                }
+                val products = task?.products?.map { product ->
+                    if (product.id == productId) {
+                        product.copy(checked = !product.checked)
+                    } else {
+                        product
+                    }
+                }
+                familyRepository.save(family.copy(tasks = family.tasks.map { entity ->
+                    if (entity.id == taskId) {
+                        entity.copy(
+                            subtasks = subtasks.orEmpty(),
+                            products = products.orEmpty()
+                        )
+                    } else {
+                        entity
+                    }
+                }))
+            }
         }
     }
 

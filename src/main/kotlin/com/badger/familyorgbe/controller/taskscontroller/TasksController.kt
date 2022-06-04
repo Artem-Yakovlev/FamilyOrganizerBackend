@@ -13,6 +13,7 @@ import com.badger.familyorgbe.models.usual.task.TaskProduct
 import com.badger.familyorgbe.service.family.FamilyService
 import com.badger.familyorgbe.service.family.actionIfHasAccess
 import com.badger.familyorgbe.service.tasks.TasksService
+import org.hibernate.annotations.Check
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.web.bind.annotation.*
@@ -79,6 +80,24 @@ class TasksController : BaseAuthedController() {
             tasksService.modifyFamilyTask(familyId = form.familyId, task = form.task)
             BaseResponse(data = ModifyJson.Response())
         } ?: BaseResponse(error = ResponseError.FAMILY_DOES_NOT_EXISTS, data = ModifyJson.Response())
+    }
+
+    @PostMapping("checkSubtaskOrProduct")
+    suspend fun checkSubtaskOrProduct(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) authHeader: String,
+        @RequestBody form: CheckSubtaskOrProductJson.Form
+    ): BaseResponse<CheckSubtaskOrProductJson.Response> {
+        val email = authHeader.getAuthEmail()
+
+        return familyService.actionIfHasAccess(familyId = form.familyId, email = email) {
+            tasksService.checkSubtask(
+                familyId = form.familyId,
+                taskId = form.taskId,
+                subtaskId = form.subtaskId,
+                productId = form.productId
+            )
+            BaseResponse(data = CheckSubtaskOrProductJson.Response())
+        } ?: BaseResponse(error = ResponseError.FAMILY_DOES_NOT_EXISTS, data = CheckSubtaskOrProductJson.Response())
     }
 
     @PostMapping("changeStatus")

@@ -4,7 +4,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "tasksubtasks")
-class SubtaskEntity(
+data class SubtaskEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,

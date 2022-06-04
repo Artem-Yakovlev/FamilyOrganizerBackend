@@ -67,7 +67,9 @@ class TasksService {
 
     @Transactional
     suspend fun deleteFamilyTaskById(familyId: Long, taskId: Long) {
-        with(Dispatchers.IO) {}
+        with(Dispatchers.IO) {
+            tasksRepository.deleteById(taskId)
+        }
     }
 
     @Transactional

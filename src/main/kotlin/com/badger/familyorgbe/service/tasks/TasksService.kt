@@ -4,6 +4,7 @@ import com.badger.familyorgbe.infoLog
 import com.badger.familyorgbe.models.entity.task.TaskStatus
 import com.badger.familyorgbe.models.usual.task.Subtask
 import com.badger.familyorgbe.models.usual.task.Task
+import com.badger.familyorgbe.repository.family.IFamilyRepository
 import com.badger.familyorgbe.repository.tasks.IFamilySubtaskRepository
 import com.badger.familyorgbe.repository.tasks.IFamilyTaskProductsRepository
 import com.badger.familyorgbe.repository.tasks.IFamilyTaskRepository
@@ -22,14 +23,21 @@ class TasksService {
     private lateinit var tasksRepository: IFamilyTaskRepository
 
     @Autowired
+    private lateinit var familyRepository: IFamilyRepository
+
+    @Autowired
     private lateinit var subtasksRepository: IFamilySubtaskRepository
 
     @Autowired
     private lateinit var taskProductsRepository: IFamilyTaskProductsRepository
 
     @Transactional
-    suspend fun createFamilyTask(task: Task) {
-        with(Dispatchers.IO) { tasksRepository.save(task.toSavingEntity()) }
+    suspend fun createFamilyTask(familyId: Long, task: Task) {
+        with(Dispatchers.IO) {
+            familyRepository.getFamilyById(id = familyId)?.let { family ->
+                familyRepository.save(family.copy(tasks = family.tasks + task.toSavingEntity()))
+            }
+        }
     }
 
     @Transactional

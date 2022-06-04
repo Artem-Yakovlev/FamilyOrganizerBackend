@@ -1,15 +1,21 @@
 package com.badger.familyorgbe.service.tasks
 
-import com.badger.familyorgbe.models.entity.task.TaskStatus
+import com.badger.familyorgbe.models.entity.task.*
 import com.badger.familyorgbe.models.usual.task.Task
 import com.badger.familyorgbe.repository.family.IFamilyRepository
 import com.badger.familyorgbe.repository.tasks.IFamilySubtaskRepository
 import com.badger.familyorgbe.repository.tasks.IFamilyTaskProductsRepository
 import com.badger.familyorgbe.repository.tasks.IFamilyTaskRepository
+import com.badger.familyorgbe.utils.betweenDayOfWeeks
+import com.badger.familyorgbe.utils.toInstantAtZone
 import kotlinx.coroutines.Dispatchers
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.threeten.bp.DayOfWeek
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.LocalTime
 
 @Service
 class TasksService {
@@ -101,7 +107,60 @@ class TasksService {
     }
 
     @Transactional
-    suspend fun changeTaskStatus(familyId: Long, taskId: Task, status: TaskStatus) {
-        with(Dispatchers.IO) {}
+    suspend fun changeTaskStatus(familyId: Long, taskId: Long, status: TaskStatus) {
+        with(Dispatchers.IO) {
+            familyRepository.getFamilyById(id = familyId)?.let { family ->
+                val task = family.tasks.find { it.id == taskId }
+
+                familyRepository.save(family.copy(tasks = family.tasks.map { entity ->
+                    if (entity.id == taskId) {
+                        entity.copy(
+                            status = status
+                        )
+                    } else {
+                        entity
+                    }
+                }))
+            }
+        }
+    }
+
+    @Transactional
+    suspend fun updateFamilyTasksStatus(familyId: Long) {
+        with(Dispatchers.IO) {
+            familyRepository.getFamilyById(familyId)?.let { family ->
+                family.tasks.map { task -> updateTaskStatus(familyId, task) }
+            }
+        }
+    }
+
+    @Transactional
+    suspend fun updateTaskStatus(familyId: Long, task: TaskEntity) {
+        if (task.status == TaskStatus.ACTIVE) {
+            val finished = task.products.all(TaskProductEntity::checked) && task.subtasks.all(SubtaskEntity::checked)
+            if (finished) {
+                changeTaskStatus(familyId, task.id, TaskStatus.FINISHED)
+            } else {
+                val category = task.category.first()
+                val failed = when (category.type) {
+                    TaskCategoryType.ONE_SHOT -> {
+                        false
+                    }
+                    TaskCategoryType.ONE_TIME -> {
+                        (category.dateTime ?: 0) > System.currentTimeMillis()
+                    }
+                    TaskCategoryType.DAYS_OF_WEEK -> {
+                        false
+                    }
+                    TaskCategoryType.EVERY_YEAR -> {
+                        val now = LocalDateTime.now()
+                        (category.dateTime ?: 0).toInstantAtZone().toLocalDateTime().withYear(now.year).isBefore(now)
+                    }
+                }
+                if (failed) {
+                    changeTaskStatus(familyId, task.id, TaskStatus.FAILED)
+                }
+            }
+        }
     }
 }

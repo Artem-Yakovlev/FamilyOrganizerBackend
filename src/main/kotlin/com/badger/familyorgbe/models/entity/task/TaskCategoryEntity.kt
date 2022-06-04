@@ -34,5 +34,5 @@ enum class TaskCategoryType {
     ONE_SHOT,
     ONE_TIME,
     DAYS_OF_WEEK,
-    EVERY_WEEK
+    EVERY_YEAR
 }

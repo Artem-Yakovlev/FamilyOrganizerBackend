@@ -1,5 +1,6 @@
 package com.badger.familyorgbe.models.usual.task
 
+import com.badger.familyorgbe.models.entity.task.TaskCategoryEntity
 import com.badger.familyorgbe.models.entity.task.TaskEntity
 import com.badger.familyorgbe.models.entity.task.TaskStatus
 import com.badger.familyorgbe.utils.converters.convertToEmailList

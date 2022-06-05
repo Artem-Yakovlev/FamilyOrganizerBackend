@@ -1,6 +1,5 @@
 package com.badger.familyorgbe.models.entity
 
-import com.badger.familyorgbe.models.entity.task.TaskCategoryEntity
 import com.badger.familyorgbe.models.entity.task.TaskEntity
 import javax.persistence.*
 
@@ -22,7 +21,9 @@ data class FamilyEntity(
     val invites: String,
 
     @Column(name = "products_ids")
-    val productsIds: String?,
+    @OneToMany(cascade = [CascadeType.ALL])
+    @JoinColumn(name = "family_id", nullable = false)
+    val products: List<ProductEntity>,
 
     @Column(name = "tasks")
     @OneToMany(cascade = [CascadeType.ALL])

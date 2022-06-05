@@ -1,6 +1,8 @@
 package com.badger.familyorgbe.service.tasks
 
+import com.badger.familyorgbe.infoLog
 import com.badger.familyorgbe.models.entity.task.*
+import com.badger.familyorgbe.models.usual.Product
 import com.badger.familyorgbe.models.usual.task.Task
 import com.badger.familyorgbe.repository.family.IFamilyRepository
 import com.badger.familyorgbe.repository.tasks.IFamilySubtaskRepository
@@ -208,4 +210,34 @@ class TasksService {
         products = task.products.map { it.copy(checked = false) },
         subtasks = task.subtasks.map { it.copy(checked = false) },
     )
+
+    @Transactional
+    suspend fun updateTasksWithProducts(familyId: Long, products: List<Product>, tasksIds: List<Long>) {
+        val remainingProducts = products.toMutableList()
+
+        with(Dispatchers.IO) { familyRepository.getFamilyById(familyId) }?.let { family ->
+            val taskProducts = family.tasks
+                .filter { task -> task.products.isNotEmpty() && task.status == TaskStatus.ACTIVE && task.id in tasksIds }
+                .map { task ->
+                    task.products.map { product ->
+                        remainingProducts
+                            .find {
+                                it.name == product.title
+                                        && it.measure == product.measure
+                                        && it.quantity == product.amount
+                            }
+                            ?.takeIf { !product.checked }
+                            ?.let { suitableProduct ->
+                                remainingProducts.remove(suitableProduct)
+                                product.copy(checked = true)
+                            } ?: product
+                    }
+                }
+            taskProductsRepository.saveAll(taskProducts.flatten())
+
+            if (remainingProducts.size != products.size) {
+                updateFamilyTasksStatus(familyId)
+            }
+        }
+    }
 }

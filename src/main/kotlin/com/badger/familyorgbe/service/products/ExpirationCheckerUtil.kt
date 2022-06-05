@@ -44,7 +44,7 @@ class ExpirationCheckerUtil {
 
                 coroutineScope.launch {
                     val productsExpiryMillis = productsService.getAllProducts(
-                        productsIds = familyService.getAllProductsIdsForFamily(familyId = family.id)
+                        familyId = family.id
                     ).mapNotNull(Product::expiryMillis)
 
                     when {

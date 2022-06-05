@@ -6,9 +6,11 @@ import com.badger.familyorgbe.core.base.BaseAuthedController
 import com.badger.familyorgbe.core.base.rest.BaseResponse
 import com.badger.familyorgbe.core.base.rest.ResponseError
 import com.badger.familyorgbe.repository.jwt.IJwtRepository
+import com.badger.familyorgbe.repository.tasks.IFamilyTaskRepository
 import com.badger.familyorgbe.service.family.FamilyService
 import com.badger.familyorgbe.service.products.IScanningUtil
 import com.badger.familyorgbe.service.products.ProductsService
+import com.badger.familyorgbe.service.tasks.TasksService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.web.bind.annotation.*
@@ -29,6 +31,9 @@ class ProductsController : BaseAuthedController() {
     @Autowired
     private lateinit var scanningUtil: IScanningUtil
 
+    @Autowired
+    private lateinit var tasksService: TasksService
+
     @PostMapping("getProducts")
     suspend fun getProducts(
         @RequestHeader(HttpHeaders.AUTHORIZATION)
@@ -41,8 +46,7 @@ class ProductsController : BaseAuthedController() {
         return familyService.getFamilyById(form.familyId)
             ?.takeIf { family -> family.members.contains(email) }
             ?.let { family ->
-                val productsIds = familyService.getAllProductsIdsForFamily(family.id)
-                val products = productsService.getAllProducts(productsIds)
+                val products = productsService.getAllProducts(family.id)
                 BaseResponse(
                     data = GetProductsJson.Response(products = products)
                 )
@@ -65,6 +69,7 @@ class ProductsController : BaseAuthedController() {
             ?.takeIf { family -> family.members.contains(email) }
             ?.let { family ->
                 val products = productsService.addProducts(familyId = family.id, products = form.products).orEmpty()
+                tasksService.updateTasksWithProducts(familyId = family.id, products = products, tasksIds = form.tasks)
                 BaseResponse(
                     data = AddProductsJson.Response(products = products)
                 )

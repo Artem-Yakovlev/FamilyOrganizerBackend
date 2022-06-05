@@ -1,5 +1,6 @@
 package com.badger.familyorgbe.service.products
 
+import com.badger.familyorgbe.models.entity.FamilyEntity
 import com.badger.familyorgbe.models.entity.ProductEntity
 import com.badger.familyorgbe.models.usual.Product
 import com.badger.familyorgbe.repository.family.IFamilyRepository
@@ -19,10 +20,10 @@ class ProductsService {
     @Autowired
     private lateinit var familyRepository: IFamilyRepository
 
-    private fun getFamilyById(familyId: Long) = familyRepository.getFamilyById(familyId)
+    private fun getFamilyById(familyId: Long): FamilyEntity? = familyRepository.getFamilyById(familyId)
 
-    suspend fun getAllProducts(productsIds: List<Long>) = with(Dispatchers.IO) {
-        productRepository.getAllByIds(productsIds)
+    suspend fun getAllProducts(familyId: Long) = with(Dispatchers.IO) {
+        getFamilyById(familyId)?.products.orEmpty()
     }.map(Product::fromEntity)
 
     suspend fun addProducts(familyId: Long, products: List<Product>) = getFamilyById(familyId)?.let { family ->
@@ -35,14 +36,13 @@ class ProductsService {
                 expiryMillis = product.expiryMillis
             )
         }
-        val savedEntities = productRepository.saveAll(savingProducts)
-        val actualIds =
-            (family.productsIds?.convertToIdsList().orEmpty() + savedEntities.map(ProductEntity::id)).sorted()
-
         val savedEntity = familyRepository.save(
-            family.copy(productsIds = actualIds.convertToString())
+            family.copy(
+                products = family.products + savingProducts
+            )
         )
-        return@let getAllProducts(savedEntity.productsIds?.convertToIdsList().orEmpty())
+
+        return@let savedEntity.products.map(Product::fromEntity)
     }
 
     suspend fun updateProduct(familyId: Long, product: Product) = getFamilyById(familyId)?.let {
@@ -53,11 +53,7 @@ class ProductsService {
 
     suspend fun deleteProducts(familyId: Long, deleteIds: List<Long>) = getFamilyById(familyId)?.let { entity ->
         productRepository.deleteAllById(deleteIds)
-        val actualIds = entity.productsIds?.convertToIdsList()?.filter { it !in deleteIds }?.sorted()?.convertToString()
 
-        val savedEntity = familyRepository.save(
-            entity.copy(productsIds = actualIds)
-        )
-        return@let getAllProducts(savedEntity.productsIds?.convertToIdsList().orEmpty())
+        return@let entity.products.filter { it.id !in deleteIds }.map(Product::fromEntity)
     }
 }

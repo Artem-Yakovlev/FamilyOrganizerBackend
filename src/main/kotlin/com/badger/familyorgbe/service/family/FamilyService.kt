@@ -33,7 +33,7 @@ class FamilyService {
             name = familyName,
             members = authorEmail,
             invites = "",
-            productsIds = "",
+            products = emptyList(),
             tasks = emptyList()
         )
         val savedEntity = with(Dispatchers.IO) { familyRepository.save(entity) }
@@ -92,12 +92,6 @@ class FamilyService {
                     .getAllByEmails(convertToEmailList(family.members))
                     .map(User::fromEntity)
             } ?: emptyList()
-    }
-
-    suspend fun getAllProductsIdsForFamily(familyId: Long): List<Long> {
-        return with(Dispatchers.IO) { familyRepository.getFamilyById(familyId) }
-            ?.productsIds?.convertToIdsList()
-            ?: emptyList()
     }
 }
 

@@ -1,6 +1,5 @@
 package com.badger.familyorgbe.models.entity
 
-import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -26,7 +25,10 @@ class ProductEntity(
     val category: Category,
 
     @Column(name = "expiryMillis")
-    val expiryMillis: Long?
+    val expiryMillis: Long?,
+
+    @Column(name = "family_id", insertable = false, updatable = false)
+    val familyId: Long = 0
 )
 
 enum class Measure {
